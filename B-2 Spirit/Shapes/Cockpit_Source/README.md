@@ -63,28 +63,23 @@ at DCS `(6.00, 1.70, 0.00)`. All three match `B-2.lua`'s `crew_members`
 positions. The panel face sits at DCS X=7.45, i.e. 0.65m forward of the
 front seats.
 
-## What's left before this can actually export as `.EDM`
+## Completed EDM Export Pipeline
 
-The real EDM binary writer (Eagle Dynamics' `io_scene_edm` addon) only works
-on Windows — its serializer is a compiled `pyedm_31x.pyd` (a Windows DLL);
-on any other OS the addon falls back to an intentional dummy stub and
-refuses to export (`"couldn't proceed edm export because it's python dummy
-plugin, not native."` — that's the addon's own error string). So finishing
-this has to happen in Blender on Windows:
+The cockpit interior has been compiled and exported as a native DCS World EDM model:
+- **`Shapes/B-2_Spirit_Cockpit.EDM` (10.48 MB)**: fully compiled with all materials, connectors, and hierarchy.
+- **`Cockpit/Scripts/mainpanel_init.lua`**: `shape_name` points directly to `"B-2_Spirit_Cockpit"`.
+- **`entry.lua`**: mounts `/Textures/Cockpit_Donor` containing 34 4K DDS textures.
 
-1. Install Blender 4.2 or 4.5 LTS (the addon's supported versions) and the
-   official `io_scene_edm` addon from
-   https://github.com/EagleDynamics/Blender-EDM-Exporter (Preferences →
-   Add-ons → Install From Disk, using `edm_tools_blender_plugin.zip` from
-   that repo's Releases).
-2. Open `B2_Spirit_Cockpit_Blockout.blend`.
-3. Replace/refine the blockout geometry as far as you want to take it —
-   the boxes are placeholders, not a target shape.
-4. Assign real EDM materials (the addon's "Update EDM Materials" button, or
-   the node-editor "Add EDM Default/Glass Material" operators) to every
-   object — plain Blender materials alone won't export correctly.
-5. File → Export → Eagle Dynamics Model (.edm), save as
-   `Shapes/B-2_Spirit_Cockpit.EDM`.
-6. In `Cockpit/Scripts/mainpanel_init.lua`, change `shape_name` from
-   `"B-2_Spirit"` to `"B-2_Spirit_Cockpit"` so the cockpit view uses the new
-   interior instead of the exterior-only shell.
+### Key Production Assets:
+1. `B2_Spirit_Cockpit_Centered.blend`: Master Blender 4.2 LTS file with all high-poly donor components mounted, parented to `B2_Cockpit_Root`, with roof elevated to Z=2.82 and A-pillars positioned outboard.
+2. `Assets/B2_Cockpit_Donor_Library.blend`: Extracted library containing:
+   - ACES II Ejection Seat (63k vertices)
+   - HOTAS Flight Stick & Rudder Pedals
+   - HOTAS 4-Lever Throttle Quadrant
+   - Switch Banks & Consoles
+   - UFC CDU Keypads
+   - HUD Combiner Glass
+3. Python Export Script:
+   ```bash
+   & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python scratch/apply_full_cockpit_fix.py
+   ```

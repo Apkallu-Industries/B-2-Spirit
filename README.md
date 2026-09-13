@@ -5,17 +5,18 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Apkallu-Industries/B-2-Spirit/releases"><img src="https://img.shields.io/badge/Release-v0.0.1v-blue.svg?style=for-the-badge" alt="Release"></a>
+  <a href="https://github.com/Apkallu-Industries/B-2-Spirit/releases"><img src="https://img.shields.io/badge/Release-v0.1.0-blue.svg?style=for-the-badge" alt="Release"></a>
   <img src="https://img.shields.io/badge/DCS_World-2.9+-green.svg?style=for-the-badge" alt="DCS World">
   <img src="https://img.shields.io/badge/Unit-509th_Bomb_Wing-darkred.svg?style=for-the-badge" alt="509th Bomb Wing">
   <img src="https://img.shields.io/badge/Motto-Mors_Ab_Alto-gold.svg?style=for-the-badge" alt="Mors Ab Alto">
-  <img src="https://img.shields.io/badge/Status-Exterior_Flyable_·_Cockpit_WIP-yellow.svg?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Status-Fully_Flyable_·_Authentic_Cockpit-brightgreen.svg?style=for-the-badge" alt="Status">
 </p>
 
-> **Development status:** the exterior airframe is flyable and fully animated;
-> the cockpit interior exists as detailed Blender source and is pending EDM
-> export (Windows-only). See **[`COMPLETION_STATUS.md`](COMPLETION_STATUS.md)**
-> for the full done / blocked / remaining roadmap.
+> **Development status:** the exterior airframe and full 3D cockpit interior are
+> **operational and flyable in DCS World**. Features a high-poly authentic flight deck
+> (`B-2_Spirit_Cockpit.EDM`), authentic ACES II ejection seats, HOTAS flight controls,
+> 4-lever throttle quadrant, calibrated HUD combiners, and 4K PBR textures. See
+> **[`COMPLETION_STATUS.md`](COMPLETION_STATUS.md)** for full documentation.
 
 ---
 
@@ -138,20 +139,20 @@ B-2-Spirit/
 
 The full, current roadmap lives in **[`COMPLETION_STATUS.md`](COMPLETION_STATUS.md)**.
 
-**Done:** plugin load & Mission Editor registration · aircraft descriptor (mass,
-SFM aero/engine, sensors, radio) · three-crew model · validated weapons &
-payloads · logical damage model · animated exterior EDM · 4K PBR textures ·
-liveries · missions · input profiles · detailed cockpit interior **source**.
+**Done:**
+- Plugin load & Mission Editor registration · aircraft descriptor (mass, SFM aero/engine, sensors, radio) · three-crew model.
+- Validated weapons & payloads (GBU-31/32/38 JDAM, LGB, JSOW, CBU) · logical damage model.
+- Animated exterior EDM (`B-2_Spirit.EDM`) with 13 control surface and landing gear arguments.
+- 4K PBR exterior textures, Whiteman AFB liveries, quick-start & combat missions, custom input profiles.
+- **Authentic 3D Cockpit EDM (`B-2_Spirit_Cockpit.EDM`)**: High-poly ACES II ejection seats (63k vertices), HOTAS flight sticks, rudder pedals, 4-lever throttle quadrant, switch banks, UFC CDU keypads, and HUD combiners.
+- **34 4K DDS Cockpit Textures**: VFS mounted via `entry.lua` (`/Textures/Cockpit_Donor`).
+- **Cockpit Ergonomics & Clearance**: Clean forward pilot & copilot views through HUD/windscreen, A-pillars moved outboard to side walls, overhead controls flush-mounted to ceiling spine at Z=2.75 with full standing headroom.
 
-**Current blocker:** the cockpit interior must be exported to `.EDM` in **Blender
-on Windows** (Eagle Dynamics' EDM exporter is Windows-only), then wired into
-`mainpanel_init.lua`.
-
-**Remaining (high level):** cockpit EDM export & clickable avionics/MFD systems ·
-cockpit textures/UVs · lights (needs model connectors) · flight-model tuning &
-the SFM-vs-EFM decision · multicrew AI seat-swap · sound · visual battle damage ·
-per-squadron liveries · full rotary-launcher weapon stations. Each item has
-priority, effort, and ready-to-paste code in the roadmap.
+**Next Steps / Roadmap:**
+- Clickable avionics and MFD page interactions (`mainpanel_init.lua` device hooks).
+- Internal lighting and night illumination data.
+- Custom F118 engine audio package.
+- Advanced EFM flight model tuning and multicrew integration.
 
 ---
 

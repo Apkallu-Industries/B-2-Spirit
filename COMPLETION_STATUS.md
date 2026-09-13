@@ -24,10 +24,11 @@ The mod is a **Standard Flight Model (SFM) flyable** aircraft. As of now it:
 - Ships a real, animated **exterior** EDM plus a PBR texture set, liveries,
   quick-start/single missions, and full input profiles.
 
-The single biggest gap to "looks like the real thing" is the **cockpit**: a
-detailed interior has been built in Blender source form but **cannot be
-exported to `.EDM` on Linux** (see §3). The second biggest is a **clickable,
-systems-driven cockpit** (avionics), which is currently stubbed (§4.4).
+The exterior airframe and full 3D cockpit interior are **operational and flyable in DCS World**.
+- Detailed high-fidelity flight deck compiled to native DCS `.EDM` (`B-2_Spirit_Cockpit.EDM`, 10.48 MB).
+- High-poly authentic military donor assets integrated: ACES II ejection seats (63k verts), HOTAS flight sticks, rudder pedals, 4-lever throttle quadrant, switch banks, UFC CDU keypads, and HUD combiner glass.
+- 34 4K DDS cockpit textures mounted in `entry.lua` via VFS (`/Textures/Cockpit_Donor`).
+- Cockpit clearance & ergonomics resolved: A-pillars positioned outboard on side walls, roof panel & arch elevated to Z=2.82 (standing headroom), overhead switch console flush-mounted to ceiling spine at Z=2.75.
 
 **Confidence key:** ✅ done · 🟡 partial/needs verification · ⛔ blocked here ·
 ⬜ not started.
@@ -52,7 +53,8 @@ systems-driven cockpit** (avionics), which is currently stubbed (§4.4).
 | Missions | ✅ | QuickStart + Single, weather fields fixed. |
 | Input profiles | ✅ | Keyboard/joystick/TrackIR, Reaper/Su-25T labels cleaned. |
 | Encyclopedia / GUI art | ✅ | Text + true-PNG icons. |
-| **Cockpit interior** | ⛔ | Detailed Blender source built; **not exported to EDM** (§3). |
+| **Cockpit interior EDM** | ✅ | **`B-2_Spirit_Cockpit.EDM` (10.48 MB)** compiled in Blender 4.2 LTS, authentic ACES II seats, HOTAS controls, 4-lever throttles, HUD glass. |
+| **Cockpit textures** | ✅ | 34 4K DDS textures mounted via `entry.lua` (`Textures/Cockpit_Donor`). |
 | Cockpit avionics/systems | ⬜ | Device scripts are stubs (§4.4). |
 | Lights | ⬜ | No `lights_data` yet; needs model connectors (§4.5, Appendix A). |
 | Sound | ⬜ | No custom sounds (§4.8). |
