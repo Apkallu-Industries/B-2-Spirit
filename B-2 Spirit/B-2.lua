@@ -1,6 +1,8 @@
 -- B-2 Spirit Stealth Bomber Aircraft Descriptor for DCS World
 -- Developed by Apkallu Industries
 
+print(">>> [B-2 Spirit] Executing B-2.lua...")
+
 B_2_Spirit = {
     Name                = 'B-2_Spirit',
     DisplayName         = _('B-2 Spirit (Flyable)'),
@@ -20,9 +22,14 @@ B_2_Spirit = {
             positioning = "BYNORMAL",
             drawonmap   = true,
         },
+        {
+            name        = "B-2_Spirit",
+            file        = "B-2_Spirit",
+        },
     },
     mapclasskey         = "P0091000021",
-    attribute           = {wsType_Air, wsType_Airplane, wsType_F_Bomber, WSTYPE_PLACEHOLDER, "Strategic bombers", "Bombers"},
+    attribute           = {wsType_Air, wsType_Airplane, wsType_F_Bomber, WSTYPE_PLACEHOLDER, "Strategic bombers", "Refuelable"},
+    Categories          = {},
 
     country_of_origin   = "USA",
 
@@ -247,3 +254,35 @@ B_2_Spirit = {
 }
 
 add_aircraft(B_2_Spirit)
+print(">>> [B-2 Spirit] add_aircraft(B_2_Spirit) called successfully.")
+
+-- Explicit Country Registration
+local countries_to_add = {"USA", "USAF Aggressors", "UK", "France", "Germany", "Italy", "Israel", "Australia", "Canada"}
+for _, c_name in ipairs(countries_to_add) do
+    local c = nil
+    if country and country.get then
+        c = country:get(c_name)
+    end
+    if not c and db and db.CountriesByName then
+        c = db.CountriesByName[c_name]
+    end
+    if c and c.Units and c.Units.Planes and c.Units.Planes.Plane then
+        local found = false
+        for _, p in pairs(c.Units.Planes.Plane) do
+            if p.Name == "B-2_Spirit" then
+                found = true
+                break
+            end
+        end
+        if not found then
+            table.insert(c.Units.Planes.Plane, {
+                Name = "B-2_Spirit",
+                in_service = 0,
+                out_of_service = 40000.0,
+            })
+            print(">>> [B-2 Spirit] Explicitly registered B-2_Spirit into country: " .. c_name)
+        else
+            print(">>> [B-2 Spirit] B-2_Spirit already present in country: " .. c_name)
+        end
+    end
+end

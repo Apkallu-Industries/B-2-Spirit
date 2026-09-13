@@ -1,10 +1,12 @@
+print(">>> [B-2 Spirit] Loading module entry.lua...")
+
 local self_ID = "B-2 Spirit by Apkallu Industries"
 declare_plugin(self_ID,
 {
     displayName     = _("B-2 Spirit (Flyable)"),
     developerName   = "Apkallu Industries",
 
-    image           = "Theme/ME/icon.png",
+    image           = "FC3.bmp",
     installed       = true,
     dirName         = current_mod_path,
     fileMenuName    = _("B-2 Spirit"),
@@ -12,6 +14,7 @@ declare_plugin(self_ID,
     version         = "0.0.1v",
     state           = "installed",
     info            = _("Northrop Grumman B-2 Spirit Stealth Strategic Heavy Bomber (Flyable Mod)."),
+    load_immediately = true,
 
     InputProfiles =
     {
@@ -64,3 +67,5 @@ else
 end
 ----------------------------------------------------------------------------------------
 plugin_done()
+
+print(">>> [B-2 Spirit] entry.lua finished successfully.")
