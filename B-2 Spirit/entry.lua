@@ -1,7 +1,7 @@
 local self_ID = "B-2 Spirit by Apkallu Industries"
 declare_plugin(self_ID,
 {
-    displayName     = _("B-2 Spirit"),
+    displayName     = _("B-2 Spirit (Flyable)"),
     developerName   = "Apkallu Industries",
 
     image           = "Theme/ME/icon.png",
@@ -38,7 +38,7 @@ declare_plugin(self_ID,
     LogBook =
     {
         {
-            name = _("B-2 Spirit"),
+            name = _("B-2 Spirit (Flyable)"),
             type = "B-2_Spirit",
         },
     },      

@@ -3,7 +3,7 @@
 
 B_2_Spirit = {
     Name                = 'B-2_Spirit',
-    DisplayName         = _('B-2 Spirit'),
+    DisplayName         = _('B-2 Spirit (Flyable)'),
     Picture             = "B-2_Spirit.png",
     Rate                = 100,
     Shape               = "B-2_Spirit",
@@ -161,11 +161,18 @@ B_2_Spirit = {
 
     EPLRS = true,
     Tasks = {
+        aircraft_task(CAS),
         aircraft_task(GroundAttack),
         aircraft_task(PinpointStrike),
         aircraft_task(RunwayAttack),
+        aircraft_task(AFAC),
+        aircraft_task(Reconnaissance),
+        aircraft_task(Escort),
+        aircraft_task(CAP),
+        aircraft_task(FighterSweep),
+        aircraft_task(Intercept),
     },
-    DefaultTask = aircraft_task(PinpointStrike),
+    DefaultTask = aircraft_task(CAS),
 
     -- Standard Flight Model (SFM) Calibrated for B-2 Flying Wing
     SFM_Data = {
@@ -199,7 +206,7 @@ B_2_Spirit = {
             MaxRUD      = 1,
             MaksRUD     = 1,
             ForsRUD     = 1,
-            type        = "Turbofan",
+            type        = "TurboFan", -- Must be PascalCase "TurboFan"
             hMaxEng     = 16.0,
             dcx_eng     = 0.012,
             cemax       = 0.45,
@@ -236,7 +243,7 @@ B_2_Spirit = {
             },
         },
     },
-    Countries = {"USA", "USAF Aggressors"},
+    Countries = {"USA", "USAF Aggressors", "UK", "France", "Germany", "Italy", "Israel", "Australia", "Canada"},
 }
 
 add_aircraft(B_2_Spirit)

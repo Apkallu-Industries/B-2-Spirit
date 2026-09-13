@@ -56,7 +56,36 @@ LogBook = {
 
 ---
 
-## Fault Incident #002: Nil Hole Corruption in `attribute` Tuple
+## Fault Incident #002: Missing Aircraft in Mission Editor Dropdown (`Can not decipher engine type`)
+
+### 1. Error Signatures in `dcs.log`
+```text
+2026-09-13 12:47:57.728 ERROR   WORLDGENERAL (Main): Error: Unit [B-2_Spirit]: Can not decipher engine type "Turbofan".
+```
+
+### 2. Root Cause Analysis
+- DCS World's flight model parser is strictly case-sensitive for the `SFM_Data.engine.type` property.
+- The string `"Turbofan"` (with lowercase `f`) is not recognized by the internal engine parser.
+- Because DCS cannot determine the thermodynamics model to use, it aborts registration of the aircraft into the world unit database.
+- As a consequence, the aircraft never populates into the Mission Editor `TYPE` dropdown for any country.
+- In addition, the Mission Editor filters the `TYPE` dropdown based on the group's assigned `TASK`. If the group task is set to `CAS` (Close Air Support) and the aircraft descriptor does not include `aircraft_task(CAS)` in its `Tasks` table, the aircraft is filtered out.
+
+### 3. Resolution
+1. Set the engine type to PascalCase `"TurboFan"` (with capital `F`):
+   ```lua
+   SFM_Data = {
+       engine = {
+           type = "TurboFan", -- Must be PascalCase "TurboFan"
+           ...
+       },
+   }
+   ```
+2. Add `aircraft_task(CAS)` and all primary operational tasks to the `Tasks` table in `B-2.lua` so the aircraft remains available regardless of the task filter selected in the Mission Editor.
+3. Use a distinctive `DisplayName` (e.g. `_('B-2 Spirit (Flyable)')`) so it displays in yellow as a player-flyable aircraft and avoids conflicts with AI-only mods.
+
+---
+
+## Fault Incident #003: Nil Hole Corruption in `attribute` Tuple
 
 ### 1. Root Cause Analysis
 - In `B-2.lua`, the classification attribute was initially defined as:
@@ -84,7 +113,7 @@ attribute = {wsType_Air, wsType_Airplane, wsType_F_Bomber, WSTYPE_PLACEHOLDER, "
 
 ---
 
-## Fault Incident #003: Pylon Weapon CLSID Syntax Incompatibilities
+## Fault Incident #004: Pylon Weapon CLSID Syntax Incompatibilities
 
 ### 1. Root Cause Analysis
 - Using custom or informal weapon identifiers in `Pylons` (e.g., `{GBU31_JDAM}`) causes mission load failures or silent pylon omission if the CLSID is unmapped.
@@ -98,7 +127,7 @@ Use standard, validated GUIDs or CLSIDs from `JDAM.lua` and `common_bombs.lua`:
 
 ---
 
-## Fault Incident #004: Blender 4.2 EDM Material Enum Values
+## Fault Incident #005: Blender 4.2 EDM Material Enum Values
 
 ### 1. Root Cause Analysis
 - When scripting headless EDM export using the Blender `io_scene_edm` addon, assigning integer values (e.g., `0` or `1`) to shader properties triggers a Python RNA Enum TypeError:
@@ -125,7 +154,9 @@ edm_node.shadow_caster = 'SHADOW_CASTER_NO'
 | Step | Check Item | Critical Requirement |
 |---|---|---|
 | **1** | `entry.lua` LogBook | `LogBook[i].type == aircraft.Name` character-for-character. |
-| **2** | `entry.lua` View Settings | `make_view_settings('UnitName', ...)` matches `aircraft.Name`. |
-| **3** | `entry.lua` Flyable Call | `make_flyable('UnitName', ...)` matches `aircraft.Name`. |
-| **4** | `B-2.lua` Attributes | Check `Scripts/Database/wsTypes.lua` — never pass unverified globals. |
-| **5** | Syntax Verification | Run `D:\Eagle Dynamics\DCS World\bin-mt\luae.exe -e "loadfile('...')"`. |
+| **2** | `B-2.lua` Engine Type | Must be exact case `"TurboFan"` (not `"Turbofan"`). |
+| **3** | `B-2.lua` Tasks | Must include `aircraft_task(CAS)` to prevent Mission Editor filter omission. |
+| **4** | `entry.lua` View Settings | `make_view_settings('UnitName', ...)` matches `aircraft.Name`. |
+| **5** | `entry.lua` Flyable Call | `make_flyable('UnitName', ...)` matches `aircraft.Name`. |
+| **6** | `B-2.lua` Attributes | Check `Scripts/Database/wsTypes.lua` — never pass unverified globals. |
+| **7** | Syntax Verification | Run `D:\Eagle Dynamics\DCS World\bin-mt\luae.exe -e "loadfile('...')"`. |
