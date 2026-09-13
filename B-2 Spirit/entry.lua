@@ -1,0 +1,71 @@
+local self_ID = "B-2 Spirit by Apkallu Industries"
+declare_plugin(self_ID,
+{
+    displayName     = _("B-2 Spirit"),
+    developerName   = "Apkallu Industries",
+
+    image           = "Theme/ME/icon.png",
+    installed       = true,
+    dirName         = current_mod_path,
+    fileMenuName    = _("B-2 Spirit"),
+
+    version         = "0.0.1v",
+    state           = "installed",
+    info            = _("Northrop Grumman B-2 Spirit Stealth Strategic Heavy Bomber (Flyable Mod)."),
+
+    InputProfiles =
+    {
+        ["B-2_Spirit"] = current_mod_path .. '/Input/B-2 Spirit',
+        ["B-2 Spirit"] = current_mod_path .. '/Input/B-2 Spirit',
+    },
+
+    Skins =
+    {
+        {
+            name = _("B-2 Spirit"),
+            dir  = "Theme"
+        },
+    },
+    
+    Missions =
+    {
+        {
+            name = _("B-2 Spirit"),
+            dir  = "Missions",
+        },
+    },      
+
+    LogBook =
+    {
+        {
+            name = _("B-2_Spirit"),
+            type = "B-2_Spirit",
+        },
+        {
+            name = _("B-2 Spirit"),
+            type = "B-2 Spirit",
+        },
+    },      
+})
+
+mount_vfs_texture_path(current_mod_path ..  "/Theme/ME")
+mount_vfs_texture_path(current_mod_path ..  "/Textures")
+mount_vfs_texture_path("Bazar/Textures/AvionicsCommon")
+mount_vfs_model_path(current_mod_path ..  "/Shapes")
+mount_vfs_liveries_path(current_mod_path ..  "/Liveries")
+
+local support_cockpit = current_mod_path .. '/Cockpit/Scripts/'
+
+dofile(current_mod_path .. "/Views.lua")
+dofile(current_mod_path .. "/B-2.lua")
+make_view_settings('B-2_Spirit', ViewSettings, SnapViews)
+make_view_settings('B-2 Spirit', ViewSettings, SnapViews)
+
+----------------------------------------------------------------------------------------
+if MAC_flyable then
+    MAC_flyable('B-2_Spirit', support_cockpit, nil, current_mod_path .. '/comm.lua')
+else
+    make_flyable('B-2_Spirit', support_cockpit, nil, current_mod_path .. '/comm.lua')
+end
+----------------------------------------------------------------------------------------
+plugin_done()
