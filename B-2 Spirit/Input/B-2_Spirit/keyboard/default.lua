@@ -19,16 +19,16 @@ join(res.keyCommands,{
 -- Weapon Fire on Enter (as well as Left Mouse Click)
 {combos = {{key = 'Return'}}, down = iCommandPlaneFire, up = iCommandPlaneFireOff, name = _('Weapon Fire - Enter'), category = _('Weapons')},
 
--- Dedicated Drone View System: Flight Seat & Chase View
-{combos = {{key = 'F1'}}, down = iCommandPlaneViewCockpit, name = _('Drone View 1: Flight Seat View (Pilot Forward Camera)'), category = _('View')},
-{combos = {{key = 'F4'}}, down = iCommandViewChase, name = _('Drone View 2: External Chase Flight View'), category = _('View')},
-{combos = {{key = 'Tab'}}, down = iCommandViewHUDOnlyOnOff, name = _('Toggle Drone Sensor / HUD View - Tab'), category = _('View')},
+-- Dedicated View System: Flight Seat & Chase View
+{combos = {{key = 'F1'}}, down = iCommandPlaneViewCockpit, name = _('View 1: Flight Seat View (Pilot Forward Camera)'), category = _('View')},
+{combos = {{key = 'F4'}}, down = iCommandViewChase, name = _('View 2: External Chase Flight View'), category = _('View')},
+{combos = {{key = 'Tab'}}, down = iCommandViewHUDOnlyOnOff, name = _('Toggle HUD View - Tab'), category = _('View')},
 
 
 -- Autopilot
 {combos = {{key = 'A', reformers = {'LAlt'}}}, down = iCommandPlaneAutopilot, name = _('Autopilot'), category = _('Autopilot')},
 {combos = {{key = 'H'}}, down = iCommandPlaneSAUHBarometric, name = _('Autopilot - Barometric Altitude Hold \'H\''), category = _('Autopilot')},
-{combos = {{key = 'A', reformers = {'LAlt'}}}, down = iCommandPlaneAutopilotOverrideOn, up = iCommandPlaneAutopilotOverrideOff, name = _('Autopilot override (Su-25T)'), category = _('Autopilot')},
+{combos = {{key = 'A', reformers = {'LAlt'}}}, down = iCommandPlaneAutopilotOverrideOn, up = iCommandPlaneAutopilotOverrideOff, name = _('Autopilot Override'), category = _('Autopilot')},
 {combos = {{key = '1', reformers = {'LAlt'}}}, down = iCommandPlaneStabTangBank, name = _('Autopilot - Attitude Hold'), category = _('Autopilot')},
 {combos = {{key = '2', reformers = {'LAlt'}}}, down = iCommandPlaneStabHbarBank, name = _('Autopilot - Altitude And Roll Hold'), category = _('Autopilot')},
 {combos = {{key = '3', reformers = {'LAlt'}}}, down = iCommandPlaneStabHorizon,	name = _('Autopilot - Transition To Level Flight Control'), category = _('Autopilot')},
@@ -41,8 +41,8 @@ join(res.keyCommands,{
 {combos = {{key = 'R', reformers = {'LCtrl'}}}, down = iCommandPlaneAirRefuel, name = _('Refueling Boom'), category = _('Systems')},
 {combos = {{key = 'P', reformers = {'RCtrl'}}}, down = iCommandPlanePackWing, name = _('Folding Wings'), category = _('Systems')},
 {combos = {{key = 'R', reformers = {'LAlt'}}}, down = iCommandPlaneJettisonFuelTanks, name = _('Jettison Fuel Tanks'), category = _('Systems')},
-{combos = {{key = '=', reformers = {'RShift'}}}, pressed = iCommandAltimeterPressureIncrease,	up = iCommandAltimeterPressureStop, name = _('Altimeter Pressure Increase Su-25T'), category = _('Systems')},
-{combos = {{key = '-', reformers = {'RShift'}}}, pressed = iCommandAltimeterPressureDecrease, up = iCommandAltimeterPressureStop, name = _('Altimeter Pressure Decrease Su-25T'), category = _('Systems')},
+{combos = {{key = '=', reformers = {'RShift'}}}, pressed = iCommandAltimeterPressureIncrease,	up = iCommandAltimeterPressureStop, name = _('Altimeter Pressure Increase'), category = _('Systems')},
+{combos = {{key = '-', reformers = {'RShift'}}}, pressed = iCommandAltimeterPressureDecrease, up = iCommandAltimeterPressureStop, name = _('Altimeter Pressure Decrease'), category = _('Systems')},
 
 -- Modes
 --{combos = {{key = '2'}}, down = iCommandPlaneModeBVR, name = _('(2) Beyond Visual Range Mode'), category = _('Modes')},

@@ -79,7 +79,7 @@ local diff = {
 				},
 			},
 		},
-		-- [A] Button: Weapon Release (Launch Hellfire)
+		-- [A] Button: Weapon Release (JDAM)
 		["d85pnilu86cdnilvdnilvpnilvunil"] = {
 			["name"] = "Weapon Release",
 			["added"] = {
