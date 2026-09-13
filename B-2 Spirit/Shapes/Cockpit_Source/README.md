@@ -23,9 +23,14 @@ at real interior geometry to fix that.
   - Glareshield/coaming and three windscreen posts framing the forward view.
   - Center pedestal with a CDU-style keypad (3x3 buttons) and a 4-lever
     throttle quadrant with grips.
-  - Two seats (pan, back, headrest, armrests), two control yokes with
+  - Two front seats (pan, back, headrest, armrests), two control yokes with
     remove-before-flight flags, and two sets of rudder pedals.
-  - Left/right side consoles, floor, side walls and aft bulkhead.
+  - Third-crew (relief) provisions in the aft cabin: a centered jump seat,
+    a fold-down crew-rest bunk (mattress + pillow + grab rail), and a
+    provisions locker / galley — matching the real B-2's crew-rest space
+    for long-duration (30+ hour) sorties.
+  - Left/right side consoles, floor, side walls and aft bulkhead (the shell
+    is extended aft of the front seats to enclose the rest area).
   - All edges beveled; per-part materials assigned (panel, trim, screen,
     bezel, seat, gauge, metal, flag). Still untextured/no UVs — it's a
     geometry+placement pass, not a finished art asset.
@@ -33,6 +38,8 @@ at real interior geometry to fix that.
   in case you want to bring it into another DCC without opening the .blend.
 - `sanity_check_render.png` — render from the pilot's DCS eye point.
 - `overview_render.png` — top-down 3/4 render showing the whole layout.
+- `crew_rest_render.png` — view aft from the front seats toward the
+  third-crew jump seat, bunk and provisions.
 
 ## Coordinates (important if you add/move geometry)
 
@@ -47,8 +54,10 @@ re-alignment:
 - Blender Z = DCS Y (up)
 
 Pilot seat is at DCS `(6.80, 1.85, -0.65)` → Blender `(6.80, 0.65, 1.85)`;
-copilot mirrors it at DCS Z=+0.65. The panel face sits at DCS X=7.45, i.e.
-0.65m forward of the seats.
+copilot mirrors it at DCS Z=+0.65. The relief jump seat is centered and aft
+at DCS `(6.00, 1.70, 0.00)`. All three match `B-2.lua`'s `crew_members`
+positions. The panel face sits at DCS X=7.45, i.e. 0.65m forward of the
+front seats.
 
 ## What's left before this can actually export as `.EDM`
 

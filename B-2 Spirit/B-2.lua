@@ -102,7 +102,7 @@ B_2_Spirit = {
     thrust_sum_max      = 31400, -- kgf (~308 kN / 69,200 lbf total dry thrust)
     thrust_sum_ab       = 31400,
 
-    crew_size           = 2,
+    crew_size           = 3,
     HumanCockpit        = true,
     HumanCockpitPath    = current_mod_path..'/Cockpit/Scripts/',
     crew_members = {
@@ -122,6 +122,15 @@ B_2_Spirit = {
             can_be_playable    = true,
             role               = "instructor",
             role_display_name  = _("Mission Commander"),
+            g_suit             = 5.0,
+        },
+        [3] = {
+            ejection_seat_name = 0,
+            drop_canopy_name   = 0,
+            pos                = {6.00, 1.70, 0.00}, -- Relief Crew (centered jump seat, aft)
+            can_be_playable    = true,
+            role               = "operator",
+            role_display_name  = _("Relief Crew"),
             g_suit             = 5.0,
         },
     },
