@@ -22,7 +22,7 @@ B_2_Spirit = {
         },
     },
     mapclasskey         = "P0091000021",
-    attribute           = {wsType_Air, wsType_Airplane, wsType_Bomber, WSTYPE_PLACEHOLDER, "Strategic bombers", "Stealth"},
+    attribute           = {wsType_Air, wsType_Airplane, wsType_F_Bomber, WSTYPE_PLACEHOLDER, "Strategic bombers", "Bombers"},
 
     country_of_origin   = "USA",
 
@@ -147,25 +147,15 @@ B_2_Spirit = {
     Pylons = {
         -- Left Internal Rotary Launcher Bay (Station 1)
         pylon(1, 0, 0.50, -0.80, -1.35, {arg = 86, arg_value = 1, use_full_connector_position = true}, {
-            { CLSID = "{GBU31_JDAM}" },            -- 2000lb JDAM
-            { CLSID = "{GBU-38}" },                -- 500lb JDAM
-            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12 Paveway II
-            { CLSID = "{BCE429FB-3572-46a4-B01B-788701083812}" }, -- Mk-84 2000lb
-            { CLSID = "{BCE429FB-3572-46a4-B01B-788701083811}" }, -- Mk-82 500lb
-            { CLSID = "{AGM_154A}" },              -- AGM-154A JSOW
-            { CLSID = "{CBU_97}" },                -- CBU-97 SFW
-            { CLSID = "{CBU_105}" },               -- CBU-105 WCMD
+            { CLSID = "{GBU-31}" },
+            { CLSID = "{GBU-38}" },
+            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
         }),
         -- Right Internal Rotary Launcher Bay (Station 2)
         pylon(2, 0, 0.50, -0.80, 1.35, {arg = 87, arg_value = 1, use_full_connector_position = true}, {
-            { CLSID = "{GBU31_JDAM}" },
+            { CLSID = "{GBU-31}" },
             { CLSID = "{GBU-38}" },
-            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },
-            { CLSID = "{BCE429FB-3572-46a4-B01B-788701083812}" },
-            { CLSID = "{BCE429FB-3572-46a4-B01B-788701083811}" },
-            { CLSID = "{AGM_154A}" },
-            { CLSID = "{CBU_97}" },
-            { CLSID = "{CBU_105}" },
+            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
         }),
     },
 

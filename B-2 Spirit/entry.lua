@@ -38,12 +38,8 @@ declare_plugin(self_ID,
     LogBook =
     {
         {
-            name = _("B-2_Spirit"),
-            type = "B-2_Spirit",
-        },
-        {
             name = _("B-2 Spirit"),
-            type = "B-2 Spirit",
+            type = "B-2_Spirit",
         },
     },      
 })
@@ -59,7 +55,6 @@ local support_cockpit = current_mod_path .. '/Cockpit/Scripts/'
 dofile(current_mod_path .. "/Views.lua")
 dofile(current_mod_path .. "/B-2.lua")
 make_view_settings('B-2_Spirit', ViewSettings, SnapViews)
-make_view_settings('B-2 Spirit', ViewSettings, SnapViews)
 
 ----------------------------------------------------------------------------------------
 if MAC_flyable then
