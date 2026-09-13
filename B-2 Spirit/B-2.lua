@@ -171,19 +171,36 @@ B_2_Spirit = {
         laserDesignator = true,
     },
 
-    -- Dual Internal Weapons Rotary Launchers (Left and Right Bays)
+    -- Dual Internal Weapons Rotary Launchers (Left and Right Bays).
+    -- All CLSIDs below are validated against DCS weapon definitions.
+    -- NOTE: the real B-2 carries up to 16x GBU-31 (8 per rotary launcher) or
+    -- 80x GBU-38 on the Smart Bomb Rack Assembly. This models one selectable
+    -- station per bay; a full rotary-launcher representation (8 stations/bay
+    -- with model connectors) is listed as remaining work in the completion doc.
     Pylons = {
         -- Left Internal Rotary Launcher Bay (Station 1)
         pylon(1, 0, 0.50, -0.80, -1.35, {arg = 86, arg_value = 1, use_full_connector_position = true}, {
-            { CLSID = "{GBU-31}" },
-            { CLSID = "{GBU-38}" },
-            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
+            { CLSID = "{GBU-31}" },                                    -- GBU-31(V)1/B JDAM 2000lb
+            { CLSID = "{GBU-31V3B}" },                                 -- GBU-31(V)3/B JDAM 2000lb penetrator
+            { CLSID = "{GBU_32_V_2B}" },                               -- GBU-32(V)2/B JDAM 1000lb
+            { CLSID = "{GBU-38}" },                                    -- GBU-38 JDAM 500lb
+            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },      -- GBU-12 Paveway II 500lb LGB
+            { CLSID = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}" },      -- GBU-10 Paveway II 2000lb LGB
+            { CLSID = "{9BCC2A2B-5708-4860-B1F1-053A18442067}" },      -- AGM-154C JSOW
+            { CLSID = "{CBU-87}" },                                    -- CBU-87 CEM cluster
+            { CLSID = "{5335D97A-35A5-4643-9D9B-026C75961E52}" },      -- CBU-97 SFW cluster
         }),
         -- Right Internal Rotary Launcher Bay (Station 2)
         pylon(2, 0, 0.50, -0.80, 1.35, {arg = 87, arg_value = 1, use_full_connector_position = true}, {
             { CLSID = "{GBU-31}" },
+            { CLSID = "{GBU-31V3B}" },
+            { CLSID = "{GBU_32_V_2B}" },
             { CLSID = "{GBU-38}" },
-            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
+            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },
+            { CLSID = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}" },
+            { CLSID = "{9BCC2A2B-5708-4860-B1F1-053A18442067}" },
+            { CLSID = "{CBU-87}" },
+            { CLSID = "{5335D97A-35A5-4643-9D9B-026C75961E52}" },
         }),
     },
 
@@ -251,6 +268,49 @@ B_2_Spirit = {
                 { 0.95,   270000,     270000 },
             },
         },
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Damage model (logical). Cell indices/args follow the DCS standard set
+    -- (see Scripts/Aircrafts/_Common/Damage.lua). Adapted for a flying-wing
+    -- layout: no vertical/horizontal tail cells; four buried engines; elevons
+    -- and split decelerons instead of ailerons/rudder. critical_damage sets
+    -- the hit threshold per cell; deps_cells propagate failures inboard.
+    -- Visual battle-damage requires matching damage arguments in the EDM
+    -- (see completion doc); logical system failure works without them.
+    -- ------------------------------------------------------------------------
+    Damage = {
+        [0]  = {critical_damage = 12, args = {146}},                       -- nose / forward fuselage
+        [1]  = {critical_damage = 8,  args = {148}},                       -- cockpit / crew compartment
+        [3]  = {critical_damage = 20, args = {65}},                        -- center body (structural)
+        [4]  = {critical_damage = 20, args = {150}},                       -- center body upper
+        [5]  = {critical_damage = 20, args = {147}},                       -- center body lower
+
+        -- Left wing (root -> mid -> tip)
+        [23] = {critical_damage = 10, args = {223}, deps_cells = {25}},    -- left wing root
+        [25] = {critical_damage = 6,  args = {226}, deps_cells = {29}},    -- left wing mid
+        [29] = {critical_damage = 4,  args = {224}},                       -- left wing outer / tip
+        -- Right wing (root -> mid -> tip)
+        [24] = {critical_damage = 10, args = {213}, deps_cells = {26}},    -- right wing root
+        [26] = {critical_damage = 6,  args = {216}, deps_cells = {30}},    -- right wing mid
+        [30] = {critical_damage = 4,  args = {214}},                       -- right wing outer / tip
+
+        -- Flight controls (elevons + decelerons)
+        [37] = {critical_damage = 4,  args = {227}},                       -- left elevon
+        [38] = {critical_damage = 4,  args = {217}},                       -- right elevon
+        [39] = {critical_damage = 4,  args = {244}},                       -- left deceleron / drag rudder
+        [40] = {critical_damage = 4,  args = {241}},                       -- right deceleron / drag rudder
+
+        -- Engines (4x buried F118), inboard pair then outboard pair
+        [59] = {critical_damage = 6,  args = {148}},                       -- engine bay 1 (L inboard)
+        [60] = {critical_damage = 6,  args = {144}},                       -- engine bay 2 (L outboard)
+        [55] = {critical_damage = 6,  args = {81}},                        -- engine bay 3 (R inboard)
+        [15] = {critical_damage = 6,  args = {267}},                       -- engine bay 4 (R outboard)
+
+        -- Landing gear
+        [83] = {critical_damage = 3,  args = {134}},                       -- nose gear
+        [84] = {critical_damage = 3,  args = {136}},                       -- left main gear
+        [85] = {critical_damage = 3,  args = {135}},                       -- right main gear
     },
 
     ViewSettings = ViewSettings,
