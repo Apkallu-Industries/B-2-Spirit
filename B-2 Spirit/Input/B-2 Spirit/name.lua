@@ -1,1 +1,1 @@
-return _("MQ-9 Reaper (Flyable)")
+return _("B-2 Spirit (Flyable)")
