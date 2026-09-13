@@ -25,6 +25,7 @@ B_2_Spirit = {
     },
     mapclasskey         = "P0091000025",
     attribute           = {wsType_Air, wsType_Airplane, wsType_Fighter, WSTYPE_PLACEHOLDER, "Battleplanes", "Strategic bombers", "Refuelable"},
+    Categories          = {"{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}", "Interceptor",},
 
     country_of_origin   = "USA",
 
@@ -103,6 +104,7 @@ B_2_Spirit = {
 
     crew_size           = 2,
     HumanCockpit        = true,
+    HumanCockpitPath    = current_mod_path..'/Cockpit/Scripts/',
     crew_members = {
         [1] = {
             ejection_seat_name = 0,
@@ -250,4 +252,5 @@ B_2_Spirit = {
 
 add_aircraft(B_2_Spirit)
 print(">>> [B-2 Spirit] add_aircraft(B_2_Spirit) called successfully.")
+
 
