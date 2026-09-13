@@ -31,8 +31,17 @@ draw_pilot					 = false
 
 external_model_canopy_arg	 = 38
 
-use_external_views = false 
-cockpit_local_point = {6.560000, 2.050000, 0.000000}
+use_external_views = false
+-- Eye point in the cockpit MODEL's local space. The B2_Spirit_Cockpit_Centered
+-- source was translated to sit on the origin (Interior_Floor is at Blender
+-- ~(-0.11,-0.65,-1.55); the whole scene is shifted ~(-6.56,-0.65,-2.10) from
+-- the generator's original DCS placement). The old value {6.56, 2.05, 0} placed
+-- the viewpoint 6.56 m FORWARD of a model that only spans ~+/-1.5 m -> the camera
+-- ended up buried inside the geometry (see b2_pilot_eye_view.png). This estimate
+-- puts the eye near the pilot seat in the centered frame. VERIFY IN-SIM and nudge:
+--   +X forward, +Y up, +Z right (metres). If you sit too low raise Y; too far
+--   back increase X. Fine-tune in ~0.05 m steps.
+cockpit_local_point = {0.100000, -0.200000, 0.000000}
 day_texture_set_value   = 0.0
 night_texture_set_value = 0.1
 
