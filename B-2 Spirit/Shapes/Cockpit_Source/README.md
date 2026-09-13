@@ -16,16 +16,23 @@ at real interior geometry to fix that.
 
 ## What's here
 
-- `B2_Spirit_Cockpit_Blockout.blend` — Blender 4.x scene with a boxed-out
-  interior: main instrument panel with an 8-screen MFD grid, glareshield,
-  center pedestal, side consoles, two seats, two control-yoke blockouts,
-  floor and side walls. Everything is plain boxes — no bevels, no detail,
-  no UVs — it exists to get proportions and placement right, not to look
-  finished.
+- `B2_Spirit_Cockpit_Blockout.blend` — Blender 4.x scene (~80 objects) with a
+  detailed two-seat interior:
+  - Main instrument panel (tilted) with an 8-MFD grid (recessed screens +
+    bezels) and an upper strip of 6 round engine/fuel gauges with rings.
+  - Glareshield/coaming and three windscreen posts framing the forward view.
+  - Center pedestal with a CDU-style keypad (3x3 buttons) and a 4-lever
+    throttle quadrant with grips.
+  - Two seats (pan, back, headrest, armrests), two control yokes with
+    remove-before-flight flags, and two sets of rudder pedals.
+  - Left/right side consoles, floor, side walls and aft bulkhead.
+  - All edges beveled; per-part materials assigned (panel, trim, screen,
+    bezel, seat, gauge, metal, flag). Still untextured/no UVs — it's a
+    geometry+placement pass, not a finished art asset.
 - `B2_Spirit_Cockpit_Blockout.fbx` — same scene, neutral interchange format,
   in case you want to bring it into another DCC without opening the .blend.
-- `sanity_check_render.png` — a quick render used to sanity-check the
-  layout before committing it.
+- `sanity_check_render.png` — render from the pilot's DCS eye point.
+- `overview_render.png` — top-down 3/4 render showing the whole layout.
 
 ## Coordinates (important if you add/move geometry)
 
