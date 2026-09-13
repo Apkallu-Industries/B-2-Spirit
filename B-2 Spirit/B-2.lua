@@ -135,7 +135,10 @@ B_2_Spirit = {
     singleInFlight      = false,
     radar_can_see_ground = true,
     detection_range_max = 160000, -- AN/APG-181 SAR range
-    CanopyGeometry      = makeAirplaneCanopyGeometry(LOOK_BAD, LOOK_BAD, LOOK_BAD),
+    CanopyGeometry = {
+        azimuth   = {-160.0, 160.0},
+        elevation = {-40.0, 90.0},
+    },
 
     Sensors = {
         RADAR = "AN/APG-63",
