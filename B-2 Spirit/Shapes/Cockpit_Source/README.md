@@ -16,7 +16,7 @@ at real interior geometry to fix that.
 
 ## What's here
 
-- `B2_Spirit_Cockpit_Blockout.blend` — Blender 4.x scene (~80 objects) with a
+- `B2_Spirit_Cockpit_Blockout.blend` — Blender 4.x scene (~270 objects) with a
   detailed two-seat interior:
   - Main instrument panel (tilted) with an 8-MFD grid (recessed screens +
     bezels) and an upper strip of 6 round engine/fuel gauges with rings.
@@ -31,6 +31,10 @@ at real interior geometry to fix that.
     for long-duration (30+ hour) sorties.
   - Left/right side consoles, floor, side walls and aft bulkhead (the shell
     is extended aft of the front seats to enclose the rest area).
+  - Detail pass: line-select key rows around every MFD, a standby instrument
+    cluster, a master-caution / annunciator strip on the coaming, an overhead
+    switch-panel with three switch banks, side-console switch rows, and a
+    center-pedestal comms/nav radio stack with knobs.
   - All edges beveled; per-part materials assigned (panel, trim, screen,
     bezel, seat, gauge, metal, flag). Still untextured/no UVs — it's a
     geometry+placement pass, not a finished art asset.
