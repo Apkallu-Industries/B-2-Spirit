@@ -13,5 +13,5 @@ Speed: High subsonic (Mach 0.95)
 Range: 6,000 nautical miles unrefueled
 Ceiling: 50,000 feet
 Armament: Conventional or nuclear weapons up to 40,000 lbs
-Unit Cost: Approximately  million (1997 dollars)
+Unit Cost: Approximately $2.1 billion (1997 dollars)
 Crew: Two

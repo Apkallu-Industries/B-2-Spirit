@@ -102,14 +102,26 @@ B_2_Spirit = {
     thrust_sum_max      = 31400, -- kgf (~308 kN / 69,200 lbf total dry thrust)
     thrust_sum_ab       = 31400,
 
-    crew_size           = 2,
+    -- Three-seat crew model. Every seat is can_be_playable so it supports two
+    -- operating intents:
+    --   1. Full human multicrew (milsim): a player can occupy each seat.
+    --   2. Solo: the client flies the pilot seat, or takes the right seat to
+    --      run weapons/nav/systems.
+    -- NOTE: true "AI holds the controls while the human swaps to the weapons
+    -- seat" (as in the AH-64D / Ka-50 / F-14) is a FULL-MODULE capability that
+    -- depends on an EFM + cockpit-systems framework. An SFM flyable mod cannot
+    -- enable that with a descriptor flag alone; the seats below declare the
+    -- crew, but AI backfill of a vacated flying seat requires module-level code
+    -- that this mod does not (yet) ship. Left seat = flying pilot; right seat =
+    -- mission commander / weapons officer; centre-aft = relief crew.
+    crew_size           = 3,
     HumanCockpit        = true,
     HumanCockpitPath    = current_mod_path..'/Cockpit/Scripts/',
     crew_members = {
         [1] = {
             ejection_seat_name = 0,
             drop_canopy_name   = 0,
-            pos                = {6.80, 1.85, -0.65}, -- Pilot (Left Seat)
+            pos                = {6.80, 1.85, -0.65}, -- Pilot (Left Seat) - flies the aircraft
             can_be_playable    = true,
             role               = "pilot",
             role_display_name  = _("Pilot in Command"),
@@ -118,10 +130,19 @@ B_2_Spirit = {
         [2] = {
             ejection_seat_name = 0,
             drop_canopy_name   = 0,
-            pos                = {6.80, 1.85, 0.65}, -- Mission Commander (Right Seat)
+            pos                = {6.80, 1.85, 0.65}, -- Mission Commander / WSO (Right Seat) - dual controls
             can_be_playable    = true,
-            role               = "instructor",
-            role_display_name  = _("Mission Commander"),
+            role               = "instructor",              -- dual-control seat: a human here can also fly
+            role_display_name  = _("Mission Commander / Weapons Officer"),
+            g_suit             = 5.0,
+        },
+        [3] = {
+            ejection_seat_name = 0,
+            drop_canopy_name   = 0,
+            pos                = {6.00, 1.70, 0.00}, -- Relief Crew (centered jump seat, aft)
+            can_be_playable    = true,
+            role               = "operator",               -- non-flying station: rest / systems monitoring
+            role_display_name  = _("Relief Crew"),
             g_suit             = 5.0,
         },
     },
@@ -150,19 +171,36 @@ B_2_Spirit = {
         laserDesignator = true,
     },
 
-    -- Dual Internal Weapons Rotary Launchers (Left and Right Bays)
+    -- Dual Internal Weapons Rotary Launchers (Left and Right Bays).
+    -- All CLSIDs below are validated against DCS weapon definitions.
+    -- NOTE: the real B-2 carries up to 16x GBU-31 (8 per rotary launcher) or
+    -- 80x GBU-38 on the Smart Bomb Rack Assembly. This models one selectable
+    -- station per bay; a full rotary-launcher representation (8 stations/bay
+    -- with model connectors) is listed as remaining work in the completion doc.
     Pylons = {
         -- Left Internal Rotary Launcher Bay (Station 1)
         pylon(1, 0, 0.50, -0.80, -1.35, {arg = 86, arg_value = 1, use_full_connector_position = true}, {
-            { CLSID = "{GBU-31}" },
-            { CLSID = "{GBU-38}" },
-            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
+            { CLSID = "{GBU-31}" },                                    -- GBU-31(V)1/B JDAM 2000lb
+            { CLSID = "{GBU-31V3B}" },                                 -- GBU-31(V)3/B JDAM 2000lb penetrator
+            { CLSID = "{GBU_32_V_2B}" },                               -- GBU-32(V)2/B JDAM 1000lb
+            { CLSID = "{GBU-38}" },                                    -- GBU-38 JDAM 500lb
+            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },      -- GBU-12 Paveway II 500lb LGB
+            { CLSID = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}" },      -- GBU-10 Paveway II 2000lb LGB
+            { CLSID = "{9BCC2A2B-5708-4860-B1F1-053A18442067}" },      -- AGM-154C JSOW
+            { CLSID = "{CBU-87}" },                                    -- CBU-87 CEM cluster
+            { CLSID = "{5335D97A-35A5-4643-9D9B-026C75961E52}" },      -- CBU-97 SFW cluster
         }),
         -- Right Internal Rotary Launcher Bay (Station 2)
         pylon(2, 0, 0.50, -0.80, 1.35, {arg = 87, arg_value = 1, use_full_connector_position = true}, {
             { CLSID = "{GBU-31}" },
+            { CLSID = "{GBU-31V3B}" },
+            { CLSID = "{GBU_32_V_2B}" },
             { CLSID = "{GBU-38}" },
-            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
+            { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },
+            { CLSID = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}" },
+            { CLSID = "{9BCC2A2B-5708-4860-B1F1-053A18442067}" },
+            { CLSID = "{CBU-87}" },
+            { CLSID = "{5335D97A-35A5-4643-9D9B-026C75961E52}" },
         }),
     },
 
@@ -232,6 +270,49 @@ B_2_Spirit = {
         },
     },
 
+    -- ------------------------------------------------------------------------
+    -- Damage model (logical). Cell indices/args follow the DCS standard set
+    -- (see Scripts/Aircrafts/_Common/Damage.lua). Adapted for a flying-wing
+    -- layout: no vertical/horizontal tail cells; four buried engines; elevons
+    -- and split decelerons instead of ailerons/rudder. critical_damage sets
+    -- the hit threshold per cell; deps_cells propagate failures inboard.
+    -- Visual battle-damage requires matching damage arguments in the EDM
+    -- (see completion doc); logical system failure works without them.
+    -- ------------------------------------------------------------------------
+    Damage = {
+        [0]  = {critical_damage = 12, args = {146}},                       -- nose / forward fuselage
+        [1]  = {critical_damage = 8,  args = {148}},                       -- cockpit / crew compartment
+        [3]  = {critical_damage = 20, args = {65}},                        -- center body (structural)
+        [4]  = {critical_damage = 20, args = {150}},                       -- center body upper
+        [5]  = {critical_damage = 20, args = {147}},                       -- center body lower
+
+        -- Left wing (root -> mid -> tip)
+        [23] = {critical_damage = 10, args = {223}, deps_cells = {25}},    -- left wing root
+        [25] = {critical_damage = 6,  args = {226}, deps_cells = {29}},    -- left wing mid
+        [29] = {critical_damage = 4,  args = {224}},                       -- left wing outer / tip
+        -- Right wing (root -> mid -> tip)
+        [24] = {critical_damage = 10, args = {213}, deps_cells = {26}},    -- right wing root
+        [26] = {critical_damage = 6,  args = {216}, deps_cells = {30}},    -- right wing mid
+        [30] = {critical_damage = 4,  args = {214}},                       -- right wing outer / tip
+
+        -- Flight controls (elevons + decelerons)
+        [37] = {critical_damage = 4,  args = {227}},                       -- left elevon
+        [38] = {critical_damage = 4,  args = {217}},                       -- right elevon
+        [39] = {critical_damage = 4,  args = {244}},                       -- left deceleron / drag rudder
+        [40] = {critical_damage = 4,  args = {241}},                       -- right deceleron / drag rudder
+
+        -- Engines (4x buried F118), inboard pair then outboard pair
+        [59] = {critical_damage = 6,  args = {148}},                       -- engine bay 1 (L inboard)
+        [60] = {critical_damage = 6,  args = {144}},                       -- engine bay 2 (L outboard)
+        [55] = {critical_damage = 6,  args = {81}},                        -- engine bay 3 (R inboard)
+        [15] = {critical_damage = 6,  args = {267}},                       -- engine bay 4 (R outboard)
+
+        -- Landing gear
+        [83] = {critical_damage = 3,  args = {134}},                       -- nose gear
+        [84] = {critical_damage = 3,  args = {136}},                       -- left main gear
+        [85] = {critical_damage = 3,  args = {135}},                       -- right main gear
+    },
+
     ViewSettings = ViewSettings,
 
     HumanRadio = {
@@ -255,5 +336,37 @@ B_2_Spirit = {
 
 add_aircraft(B_2_Spirit)
 print(">>> [B-2 Spirit] add_aircraft(B_2_Spirit) called successfully.")
+
+-- Explicit Country Registration
+-- add_aircraft() reads B_2_Spirit.Countries, but if this module loads after a
+-- country's unit database has already been cached, the aircraft can silently
+-- fail to appear in the Mission Editor's TYPE dropdown for that country.
+-- Guard against that by injecting the unit directly if it is missing.
+local countries_to_add = {"USA", "USAF Aggressors", "UK", "France", "Germany", "Italy", "Israel", "Australia", "Canada"}
+for _, c_name in ipairs(countries_to_add) do
+    local c = nil
+    if country and country.get then
+        c = country:get(c_name)
+    end
+    if not c and db and db.CountriesByName then
+        c = db.CountriesByName[c_name]
+    end
+    if c and c.Units and c.Units.Planes and c.Units.Planes.Plane then
+        local found = false
+        for _, p in pairs(c.Units.Planes.Plane) do
+            if p.Name == "B-2_Spirit" then
+                found = true
+                break
+            end
+        end
+        if not found then
+            table.insert(c.Units.Planes.Plane, {
+                Name = "B-2_Spirit",
+                in_service = 0,
+                out_of_service = 40000.0,
+            })
+        end
+    end
+end
 
 

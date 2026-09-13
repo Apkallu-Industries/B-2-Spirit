@@ -9,8 +9,13 @@
   <img src="https://img.shields.io/badge/DCS_World-2.9+-green.svg?style=for-the-badge" alt="DCS World">
   <img src="https://img.shields.io/badge/Unit-509th_Bomb_Wing-darkred.svg?style=for-the-badge" alt="509th Bomb Wing">
   <img src="https://img.shields.io/badge/Motto-Mors_Ab_Alto-gold.svg?style=for-the-badge" alt="Mors Ab Alto">
-  <img src="https://img.shields.io/badge/Status-Flyable_Fully_Animated-success.svg?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Status-Exterior_Flyable_·_Cockpit_WIP-yellow.svg?style=for-the-badge" alt="Status">
 </p>
+
+> **Development status:** the exterior airframe is flyable and fully animated;
+> the cockpit interior exists as detailed Blender source and is pending EDM
+> export (Windows-only). See **[`COMPLETION_STATUS.md`](COMPLETION_STATUS.md)**
+> for the full done / blocked / remaining roadmap.
 
 ---
 
@@ -27,8 +32,9 @@ Developed and maintained by **Apkallu Industries** under the *Autonomous Drone P
 - ✈️ **Authentic Airframe Scaling**: Precision 1:1 scale (52.42 m wingspan, 21.0 m length, 5.18 m height) calibrated from engineering data.
 - 🎨 **4K PBR Stealth Pipeline**: Custom Diffuse, Normal, and RoughMet maps simulating radar-absorbent material (RAM) coatings and canopy tinting.
 - 🕹️ **13 Animated Argument Channels**: Fully rigged flight surfaces, landing gear retraction, and rotary weapons bay doors compiled to native DCS `.EDM`.
-- 💣 **Dual Internal Rotary Bays**: Station 1 (Left) and Station 2 (Right) configured for precision-guided munitions (GBU-31/38 JDAM, AGM-154 JSOW, Mk-84, Mk-82, CBU-97/105).
-- 💺 **Dual Crew Cockpit Views**: Pilot Seat (Left) and Mission Commander Seat (Right, SnapView 9) with calibrated cockpit eye horizons.
+- 💣 **Dual Internal Rotary Bays**: Station 1 (Left) and Station 2 (Right), each loaded with a validated precision-guided munition set — GBU-31 / GBU-31(V)3B penetrator / GBU-32 / GBU-38 JDAM, GBU-10 & GBU-12 Paveway II LGBs, AGM-154C JSOW, and CBU-87 / CBU-97 clusters. 8 Mission Editor loadout presets included.
+- 💺 **Three-Crew Cockpit**: Pilot in Command (left), Mission Commander / Weapons Officer (right), and a Relief Crew jump seat with an aft crew-rest area for long-duration sorties — all seats `can_be_playable`.
+- 🛡️ **Logical Damage Model**: Flying-wing damage cells (four buried engines, elevons + split decelerons, three-wheel gear) with inboard failure propagation.
 - 🎯 **Instant Action & Missions**: FL350 high-altitude ingress and Senaki-Kolkhi Runway 09 hot start missions with verified weather parameters.
 - 🎖️ **Virtual Squadron Roster**: Authentic Whiteman AFB liveries with painted military aircraft decals and low-observable stealth stencils.
 
@@ -105,21 +111,47 @@ robocopy ".\B-2 Spirit" "$HOME\Saved Games\DCS\Mods\aircraft\B-2 Spirit" /MIR /F
 ```text
 B-2-Spirit/
 ├── B-2 Spirit/                       <-- Core DCS World Mod Root
-│   ├── Cockpit/                      <-- Cockpit views and instrument configurations
+│   ├── Cockpit/Scripts/              <-- Cockpit device/panel scripts (stubs; see roadmap)
 │   ├── Encyclopedia/                 <-- In-game encyclopedia entry & high-res profile
 │   ├── Input/B-2 Spirit/             <-- Keyboard, mouse, joystick, & Xbox controller diffs
-│   ├── Liveries/B-2 Spirit/          <-- 509th BW, 13th BS, 393d BS, and 325th WPS liveries
+│   ├── Liveries/B-2_Spirit/          <-- 509th BW, 13th BS, 393d BS, 325th WPS liveries
 │   ├── Missions/                     <-- QuickStart & Single Player .miz files
-│   ├── Shapes/B-2_Spirit.EDM         <-- Compiled DCS 3D binary with 13 animated channels
+│   ├── Shapes/
+│   │   ├── B-2_Spirit.EDM            <-- Compiled DCS 3D exterior (animated channels)
+│   │   └── Cockpit_Source/           <-- Blender cockpit interior source + build scripts
 │   ├── Textures/                     <-- 4K PBR texture sets (Diffuse, Normal, RoughMet)
 │   ├── Theme/                        <-- UI backgrounds, transparent award badges, & icons
-│   ├── B-2.lua                       <-- Aircraft aerodynamics, engine, sensors, & payload
+│   ├── UnitPayloads/                 <-- Mission Editor loadout presets
+│   ├── B-2.lua                       <-- Aircraft aero, engine, sensors, crew, weapons, damage
 │   ├── entry.lua                     <-- Module registration & DCS plugin hooks
 │   └── Views.lua                     <-- Pilot & Mission Commander 6DOF camera horizons
 ├── assets/                           <-- High-res stencils, painted decals, & banners
-├── source/                           <-- Raw Blender rigging scripts & 3D models
+├── source/                           <-- Raw 3D source (pbr_b-2_spirit.glb)
+├── COMPLETION_STATUS.md              <-- Done / blocked / remaining roadmap
+├── DCS_MOD_DEVELOPER_TROUBLESHOOTING_GUIDE.md  <-- Engineering fault/resolution log
 └── README.md                         <-- Project Documentation
 ```
+
+---
+
+## 🛠️ Development Status & Roadmap
+
+The full, current roadmap lives in **[`COMPLETION_STATUS.md`](COMPLETION_STATUS.md)**.
+
+**Done:** plugin load & Mission Editor registration · aircraft descriptor (mass,
+SFM aero/engine, sensors, radio) · three-crew model · validated weapons &
+payloads · logical damage model · animated exterior EDM · 4K PBR textures ·
+liveries · missions · input profiles · detailed cockpit interior **source**.
+
+**Current blocker:** the cockpit interior must be exported to `.EDM` in **Blender
+on Windows** (Eagle Dynamics' EDM exporter is Windows-only), then wired into
+`mainpanel_init.lua`.
+
+**Remaining (high level):** cockpit EDM export & clickable avionics/MFD systems ·
+cockpit textures/UVs · lights (needs model connectors) · flight-model tuning &
+the SFM-vs-EFM decision · multicrew AI seat-swap · sound · visual battle damage ·
+per-squadron liveries · full rotary-launcher weapon stations. Each item has
+priority, effort, and ready-to-paste code in the roadmap.
 
 ---
 

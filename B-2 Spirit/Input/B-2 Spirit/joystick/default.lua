@@ -2,14 +2,14 @@ local res = external_profile("Config/Input/Aircrafts/base_joystick_binding.lua")
 
 join(res.keyCommands,{
 
--- Xbox Controller & Hotas Dedicated Bindings for MQ-9 Reaper
-{combos = {{key = 'JOY_BTN1'}}, down = iCommandPlanePickleOn, up = iCommandPlanePickleOff, name = _('Weapon Release / Launch Hellfire (Controller [A])'), category = _('Weapons')},
+-- Xbox Controller & Hotas Dedicated Bindings for B-2 Spirit
+{combos = {{key = 'JOY_BTN1'}}, down = iCommandPlanePickleOn, up = iCommandPlanePickleOff, name = _('Weapon Release (JDAM) (Controller [A])'), category = _('Weapons')},
 {combos = {{key = 'JOY_BTN2'}}, down = iCommandPlaneEOSOnOff, name = _('Optical Sensor / Camera On-Off (Controller [B])'), category = _('Sensors')},
 {combos = {{key = 'JOY_BTN3'}}, down = iCommandPlaneChangeLock, up = iCommandPlaneChangeLockUp, name = _('Target Lock / Tracking Gate (Controller [X])'), category = _('Sensors')},
 {combos = {{key = 'JOY_BTN4'}}, down = iCommandPlaneLaserRangerOnOff, name = _('Laser Ranger & Designator PRF 1688 (Controller [Y])'), category = _('Sensors')},
 {combos = {{key = 'JOY_BTN5'}}, down = iCommandPlaneZoomOut, name = _('Sensor Zoom Out (Controller [LB])'), category = _('Sensors')},
 {combos = {{key = 'JOY_BTN6'}}, down = iCommandPlaneZoomIn, name = _('Sensor Zoom In (Controller [RB])'), category = _('Sensors')},
-{combos = {{key = 'JOY_BTN7'}}, down = iCommandViewHUDOnlyOnOff, name = _('Toggle Drone 2-View: Clean Sensor / Chase (Controller [View/Back])'), category = _('View')},
+{combos = {{key = 'JOY_BTN7'}}, down = iCommandViewHUDOnlyOnOff, name = _('Toggle 2-View: HUD / Chase (Controller [View/Back])'), category = _('View')},
 {combos = {{key = 'JOY_BTN8'}}, down = iCommandPlaneSAUHBarometric, name = _('Barometric Altitude Hold Autopilot (Controller [Menu/Start])'), category = _('Autopilot')},
 {combos = {{key = 'JOY_BTN9'}}, down = iCommandPlaneModeGround, name = _('Air-To-Ground Combat Mode 7 (Controller [LS Click])'), category = _('Modes')},
 {combos = {{key = 'JOY_BTN10'}}, down = iCommandViewCameraCenter, name = _('Recenter Camera / Flight Seat View (Controller [RS Click])'), category = _('View')},
