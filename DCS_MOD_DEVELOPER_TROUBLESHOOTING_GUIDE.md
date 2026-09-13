@@ -108,12 +108,62 @@ LogBook = {
 ### 2. Resolution
 Always use verified `wsTypes.lua` constants. For heavy and tactical bombers, use `wsType_F_Bomber`:
 ```lua
-attribute = {wsType_Air, wsType_Airplane, wsType_F_Bomber, WSTYPE_PLACEHOLDER, "Strategic bombers", "Bombers"},
+attribute = {wsType_Air, wsType_Airplane, wsType_F_Bomber, WSTYPE_PLACEHOLDER, "Strategic bombers", "Refuelable"},
 ```
 
 ---
 
-## Fault Incident #004: Pylon Weapon CLSID Syntax Incompatibilities
+## Fault Incident #004: Missing Aircraft from Country Dropdown (`country.Units.Planes.Plane`)
+
+### 1. Error Signatures
+The mod passes Lua validation, DCS boots without errors, but the aircraft does not appear in the Mission Editor `TYPE` dropdown under USA or any other coalition country.
+
+### 2. Root Cause Analysis
+- In DCS World (`MissionEditor/modules/me_aircraft.lua:1056`), the Mission Editor populates available aircraft by iterating directly over:
+  ```lua
+  aircrafts = country.Units.Planes.Plane
+  for _tmp, plane in pairs(aircrafts) do
+      local unit = DB.unit_by_type[plane.Name]
+      ...
+  ```
+- While `add_aircraft(self)` is supposed to read `self.Countries = {"USA", ...}`, if third-party modules are loaded after country initialization or if deferred loading occurs, DCS does not automatically append the unit into `country.Units.Planes.Plane`.
+- If the unit name is not present in that table, the Mission Editor treats it as belonging to no country and completely hides it from the dropdown.
+- Furthermore, if `load_immediately = true` is omitted from `declare_plugin`, the module load sequence can be deferred until after the UI database cache has already completed its scan.
+
+### 3. Resolution
+1. Set `load_immediately = true` in `declare_plugin`:
+   ```lua
+   declare_plugin(self_ID, {
+       ...
+       load_immediately = true,
+   })
+   ```
+2. In `B-2.lua`, append an explicit country registration loop immediately after `add_aircraft(B_2_Spirit)` to ensure the aircraft is injected into both `country:get("USA").Units.Planes.Plane` and `db.CountriesByName["USA"].Units.Planes.Plane`:
+   ```lua
+   local countries_to_add = {"USA", "USAF Aggressors", "UK", "France", "Germany", "Italy", "Israel", "Australia", "Canada"}
+   for _, c_name in ipairs(countries_to_add) do
+       local c = (country and country.get and country:get(c_name)) or (db and db.CountriesByName and db.CountriesByName[c_name])
+       if c and c.Units and c.Units.Planes and c.Units.Planes.Plane then
+           local found = false
+           for _, p in pairs(c.Units.Planes.Plane) do
+               if p.Name == "B-2_Spirit" then found = true; break end
+           end
+           if not found then
+               table.insert(c.Units.Planes.Plane, {
+                   Name = "B-2_Spirit",
+                   in_service = 0,
+                   out_of_service = 40000.0,
+               })
+           end
+       end
+   end
+   ```
+3. Initialize `Categories = {}` in the aircraft descriptor to prevent `nil` category lookups during mission briefing generation.
+4. Set `image = "FC3.bmp"` in `declare_plugin` to use the standard, built-in FC3 icon sprite for cockpit-modded aircraft.
+
+---
+
+## Fault Incident #005: Pylon Weapon CLSID Syntax Incompatibilities
 
 ### 1. Root Cause Analysis
 - Using custom or informal weapon identifiers in `Pylons` (e.g., `{GBU31_JDAM}`) causes mission load failures or silent pylon omission if the CLSID is unmapped.
@@ -127,7 +177,7 @@ Use standard, validated GUIDs or CLSIDs from `JDAM.lua` and `common_bombs.lua`:
 
 ---
 
-## Fault Incident #005: Blender 4.2 EDM Material Enum Values
+## Fault Incident #006: Blender 4.2 EDM Material Enum Values
 
 ### 1. Root Cause Analysis
 - When scripting headless EDM export using the Blender `io_scene_edm` addon, assigning integer values (e.g., `0` or `1`) to shader properties triggers a Python RNA Enum TypeError:
@@ -156,7 +206,9 @@ edm_node.shadow_caster = 'SHADOW_CASTER_NO'
 | **1** | `entry.lua` LogBook | `LogBook[i].type == aircraft.Name` character-for-character. |
 | **2** | `B-2.lua` Engine Type | Must be exact case `"TurboFan"` (not `"Turbofan"`). |
 | **3** | `B-2.lua` Tasks | Must include `aircraft_task(CAS)` to prevent Mission Editor filter omission. |
-| **4** | `entry.lua` View Settings | `make_view_settings('UnitName', ...)` matches `aircraft.Name`. |
-| **5** | `entry.lua` Flyable Call | `make_flyable('UnitName', ...)` matches `aircraft.Name`. |
-| **6** | `B-2.lua` Attributes | Check `Scripts/Database/wsTypes.lua` — never pass unverified globals. |
-| **7** | Syntax Verification | Run `D:\Eagle Dynamics\DCS World\bin-mt\luae.exe -e "loadfile('...')"`. |
+| **4** | `entry.lua` Immediate Load | Set `load_immediately = true` in `declare_plugin` so DCS scans it synchronously. |
+| **5** | Country Injection | Inject `{ Name = unit_name }` into `country.Units.Planes.Plane` if `add_aircraft` does not auto-bind. |
+| **6** | `entry.lua` View Settings | `make_view_settings('UnitName', ...)` matches `aircraft.Name`. |
+| **7** | `entry.lua` Flyable Call | `make_flyable('UnitName', ...)` matches `aircraft.Name`. |
+| **8** | `B-2.lua` Attributes | Check `Scripts/Database/wsTypes.lua` — never pass unverified globals. |
+| **9** | Syntax Verification | Run `D:\Eagle Dynamics\DCS World\bin-mt\luae.exe -e "loadfile('...')"`. |
