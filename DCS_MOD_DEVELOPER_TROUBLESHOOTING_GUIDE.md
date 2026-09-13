@@ -199,6 +199,21 @@ edm_node.shadow_caster = 'SHADOW_CASTER_NO'
 
 ---
 
+## Fault Incident #007: Incident #004 Fix Silently Reverted by an Unrelated Commit
+
+### 1. Root Cause Analysis
+- Commit `d9d9c75` correctly applied the Incident #004 fix: `load_immediately = true` in `entry.lua`'s `declare_plugin` call, plus an explicit country-database registration loop appended after `add_aircraft()` in `B-2.lua`.
+- A later commit (`05dddc7`) introduced unrelated debug logging in `entry.lua` using `io.open("C:/Users/danym/Saved Games/DCS/Logs/b2_spirit.log", "w")`. DCS's mod-script sandbox does not permit this kind of raw filesystem access from `entry.lua`, so the plugin failed to load ("Fix fatal Scripting error... caused plugin skip", commit `eb26aec`).
+- The fix for that crash (`eb26aec`) rewrote the top of `entry.lua` wholesale to strip out the broken logging, but the diff also removed `load_immediately = true` and dropped the entire country-registration loop from `B-2.lua` as collateral damage. Neither was ever restored.
+- Net effect: the `io.open` crash was fixed, but the Incident #004 fix it was bundled next to was quietly undone, leaving the mod exposed to the original "missing from Mission Editor dropdown" symptom again.
+
+### 2. Resolution
+Re-add `load_immediately = true` to `entry.lua`'s `declare_plugin` table, and re-add the explicit country-registration loop after `add_aircraft(B_2_Spirit)` in `B-2.lua`, using only `print()` for any logging (never `io.*`, which is unavailable/unsafe in this sandboxed context).
+
+**Lesson:** when reverting a broken change, revert only the lines that caused the failure — a broad rewrite of a shared block can silently discard unrelated fixes living in the same commit.
+
+---
+
 ## Developer Quick Reference Checklist
 
 | Step | Check Item | Critical Requirement |

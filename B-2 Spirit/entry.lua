@@ -11,6 +11,7 @@ declare_plugin("B-2 Spirit by Apkallu Industries",
     version         = "0.0.1v",
     state           = "installed",
     info            = _("Northrop Grumman B-2 Spirit Stealth Strategic Heavy Bomber (Flyable Mod)."),
+    load_immediately = true,
 
     encyclopedia_path = current_mod_path .. '/Encyclopedia',
 

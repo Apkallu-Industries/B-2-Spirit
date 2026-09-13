@@ -256,4 +256,36 @@ B_2_Spirit = {
 add_aircraft(B_2_Spirit)
 print(">>> [B-2 Spirit] add_aircraft(B_2_Spirit) called successfully.")
 
+-- Explicit Country Registration
+-- add_aircraft() reads B_2_Spirit.Countries, but if this module loads after a
+-- country's unit database has already been cached, the aircraft can silently
+-- fail to appear in the Mission Editor's TYPE dropdown for that country.
+-- Guard against that by injecting the unit directly if it is missing.
+local countries_to_add = {"USA", "USAF Aggressors", "UK", "France", "Germany", "Italy", "Israel", "Australia", "Canada"}
+for _, c_name in ipairs(countries_to_add) do
+    local c = nil
+    if country and country.get then
+        c = country:get(c_name)
+    end
+    if not c and db and db.CountriesByName then
+        c = db.CountriesByName[c_name]
+    end
+    if c and c.Units and c.Units.Planes and c.Units.Planes.Plane then
+        local found = false
+        for _, p in pairs(c.Units.Planes.Plane) do
+            if p.Name == "B-2_Spirit" then
+                found = true
+                break
+            end
+        end
+        if not found then
+            table.insert(c.Units.Planes.Plane, {
+                Name = "B-2_Spirit",
+                in_service = 0,
+                out_of_service = 40000.0,
+            })
+        end
+    end
+end
+
 
