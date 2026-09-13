@@ -102,6 +102,18 @@ B_2_Spirit = {
     thrust_sum_max      = 31400, -- kgf (~308 kN / 69,200 lbf total dry thrust)
     thrust_sum_ab       = 31400,
 
+    -- Three-seat crew model. Every seat is can_be_playable so it supports two
+    -- operating intents:
+    --   1. Full human multicrew (milsim): a player can occupy each seat.
+    --   2. Solo: the client flies the pilot seat, or takes the right seat to
+    --      run weapons/nav/systems.
+    -- NOTE: true "AI holds the controls while the human swaps to the weapons
+    -- seat" (as in the AH-64D / Ka-50 / F-14) is a FULL-MODULE capability that
+    -- depends on an EFM + cockpit-systems framework. An SFM flyable mod cannot
+    -- enable that with a descriptor flag alone; the seats below declare the
+    -- crew, but AI backfill of a vacated flying seat requires module-level code
+    -- that this mod does not (yet) ship. Left seat = flying pilot; right seat =
+    -- mission commander / weapons officer; centre-aft = relief crew.
     crew_size           = 3,
     HumanCockpit        = true,
     HumanCockpitPath    = current_mod_path..'/Cockpit/Scripts/',
@@ -109,7 +121,7 @@ B_2_Spirit = {
         [1] = {
             ejection_seat_name = 0,
             drop_canopy_name   = 0,
-            pos                = {6.80, 1.85, -0.65}, -- Pilot (Left Seat)
+            pos                = {6.80, 1.85, -0.65}, -- Pilot (Left Seat) - flies the aircraft
             can_be_playable    = true,
             role               = "pilot",
             role_display_name  = _("Pilot in Command"),
@@ -118,10 +130,10 @@ B_2_Spirit = {
         [2] = {
             ejection_seat_name = 0,
             drop_canopy_name   = 0,
-            pos                = {6.80, 1.85, 0.65}, -- Mission Commander (Right Seat)
+            pos                = {6.80, 1.85, 0.65}, -- Mission Commander / WSO (Right Seat) - dual controls
             can_be_playable    = true,
-            role               = "instructor",
-            role_display_name  = _("Mission Commander"),
+            role               = "instructor",              -- dual-control seat: a human here can also fly
+            role_display_name  = _("Mission Commander / Weapons Officer"),
             g_suit             = 5.0,
         },
         [3] = {
@@ -129,7 +141,7 @@ B_2_Spirit = {
             drop_canopy_name   = 0,
             pos                = {6.00, 1.70, 0.00}, -- Relief Crew (centered jump seat, aft)
             can_be_playable    = true,
-            role               = "operator",
+            role               = "operator",               -- non-flying station: rest / systems monitoring
             role_display_name  = _("Relief Crew"),
             g_suit             = 5.0,
         },
