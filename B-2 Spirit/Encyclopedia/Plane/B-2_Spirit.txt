@@ -1,0 +1,17 @@
+The Northrop Grumman B-2 Spirit is a multi-role stealth heavy bomber capable of delivering both conventional and nuclear munitions. A dramatic leap in technology, the B-2 represents a major milestone in the U.S. Air Force bomber modernization program. Its low-observable, or stealth, characteristics give it the unique ability to penetrate an enemy's most sophisticated defenses and threaten its most valued, and heavily defended, targets.
+
+The B-2's blended wing/body configuration gives it a low radar cross-section. The bomber can fly at high subsonic speeds at altitudes up to 50,000 feet. Its four General Electric F118-GE-100 non-afterburning turbofan engines, each producing approximately 17,300 pounds of thrust, are buried within the wing to minimize infrared and radar signatures.
+
+The B-2 has a crew of two pilots: the aircraft commander in the left seat and the mission commander in the right seat. The aircraft features fly-by-wire flight controls and a glass cockpit with four color multifunction displays.
+
+First flight: July 17, 1989
+Wingspan: 172 feet (52.4 meters)
+Length: 69 feet (21 meters)
+Height: 17 feet (5.18 meters)
+Weight: Max takeoff 336,500 lbs (152,634 kg)
+Speed: High subsonic (Mach 0.95)
+Range: 6,000 nautical miles unrefueled
+Ceiling: 50,000 feet
+Armament: Conventional or nuclear weapons up to 40,000 lbs
+Unit Cost: Approximately  million (1997 dollars)
+Crew: Two
