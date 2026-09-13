@@ -48,6 +48,7 @@ declare_plugin("B-2 Spirit by Apkallu Industries",
 
 mount_vfs_texture_path(current_mod_path ..  "/Theme/ME")
 mount_vfs_texture_path(current_mod_path ..  "/Textures")
+mount_vfs_texture_path(current_mod_path ..  "/Textures/Cockpit_Donor")
 mount_vfs_texture_path(current_mod_path ..  "/Cockpit/Scripts/IndicationTextures")
 mount_vfs_texture_path("Bazar/Textures/AvionicsCommon")
 mount_vfs_model_path(current_mod_path ..  "/Shapes")
