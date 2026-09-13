@@ -1,69 +1,65 @@
-ViewSettings = ViewSettings or {}
-SnapViews = SnapViews or {}
+local cockpit_local_point = {6.560000, 2.050000, 0.000000} -- Aligned with Cockpit_F-22A
 
-local function create_b2_views()
-    return {
-        Cockpit = {
-            [1] = { -- Default Pilot Eye (Left Seat)
-                CameraViewAngleLimits  = {20.000000, 140.000000},
-                CameraAngleLimits      = {160.000000, -85.000000, 90.000000},
-                EyePoint               = {0.050000, 0.100000, 0.000000},
-                Limits6DOF             = {x = {-0.60, 0.60}, y = {-0.40, 0.40}, z = {-0.50, 0.50}, roll = 90.000000},
-                AllowBinocular         = true,
-                CameraAngleRestriction = {use_angles = false},
-            },
-        },
-        Chase = {
-            LocalPoint      = {-28.000000, 6.000000, 0.000000},
-            Angles          = {0.000000, 0.000000},
-        },
-        Arcade = {
-            LocalPoint      = {-32.000000, 7.500000, 0.000000},
-            Angles          = {0.000000, 0.000000},
-        },
-    }
-end
+local b2_cockpit_view = {
+    CockpitLocalPoint      = cockpit_local_point,
+    CameraViewAngleLimits  = {20.000000, 140.000000},
+    CameraAngleRestriction = {false, 90.000000, 0.500000},
+    CameraAngleLimits      = {200.000000, -80.000000, 110.000000},
+    EyePoint               = {0.000000, 0.000000, 0.000000},
+    limits_6DOF            = {x = {-0.400000, 0.800000}, y = {-0.500000, 0.400000}, z = {-0.500000, 1.800000}, roll = 90.000000},
+    ShoulderSize           = 0.20,
+    AllowBinocular         = true,
+}
 
-ViewSettings["B-2_Spirit"] = create_b2_views()
-ViewSettings["B-2 Spirit"]  = create_b2_views()
-ViewSettings["B-2A"]        = create_b2_views()
+ViewSettings = {
+    Cockpit = {
+        [1] = b2_cockpit_view,
+    },
+    Chase = {
+        LocalPoint      = {-28.000000, 6.000000, 0.000000},
+        AnglesDefault   = {180.000000, -8.000000},
+    },
+    Arcade = {
+        LocalPoint      = {-32.000000, 7.500000, 0.000000},
+        AnglesDefault   = {0.000000, -8.000000},
+    },
+}
 
-local function create_b2_snapviews()
+-- Support keyed format for make_view_settings compatibility
+ViewSettings["B-2_Spirit"] = ViewSettings
+ViewSettings["B-2 Spirit"]  = ViewSettings
+ViewSettings["B-2A"]        = ViewSettings
+
+local function make_snap_slot()
     local snap = {}
     for i = 1, 13 do
         snap[i] = {
-            viewAngle = 80.0,
+            viewAngle = 88.0,
             hAngle    = 0.0,
-            vAngle    = -4.0,
-            x_trans   = 6.80,  -- Pilot seat forward
-            y_trans   = 1.85,  -- Pilot seat eye height
-            z_trans   = -0.65, -- Pilot seat left of center
+            vAngle    = -8.4,
+            x_trans   = 0.247411,
+            y_trans   = -0.067882,
+            z_trans   = 0.0,
             rollAngle = 0.0,
         }
     end
-    -- SnapView 13 is default cockpit view
+    -- SnapView 13: Default Cockpit View (Pilot Center Seat Looking at Glass Cockpit)
     snap[13] = {
-        viewAngle = 85.0,
+        viewAngle = 88.7,
         hAngle    = 0.0,
-        vAngle    = -4.0,
-        x_trans   = 6.80,
-        y_trans   = 1.85,
-        z_trans   = -0.65,
-        rollAngle = 0.0,
-    }
-    -- SnapView 9 is Mission Commander (Right Seat)
-    snap[9] = {
-        viewAngle = 85.0,
-        hAngle    = 0.0,
-        vAngle    = -4.0,
-        x_trans   = 6.80,
-        y_trans   = 1.85,
-        z_trans   = 0.65, -- Right seat
+        vAngle    = -8.4,
+        x_trans   = 0.247411,
+        y_trans   = -0.067882,
+        z_trans   = 0.0,
         rollAngle = 0.0,
     }
     return snap
 end
 
-SnapViews["B-2_Spirit"] = create_b2_snapviews()
-SnapViews["B-2 Spirit"]  = create_b2_snapviews()
-SnapViews["B-2A"]        = create_b2_snapviews()
+SnapViews = {
+    [1] = make_snap_slot(),
+}
+
+SnapViews["B-2_Spirit"] = SnapViews
+SnapViews["B-2 Spirit"]  = SnapViews
+SnapViews["B-2A"]        = SnapViews

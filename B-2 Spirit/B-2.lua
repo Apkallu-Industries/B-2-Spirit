@@ -179,7 +179,7 @@ B_2_Spirit = {
     -- with model connectors) is listed as remaining work in the completion doc.
     Pylons = {
         -- Left Internal Rotary Launcher Bay (Station 1)
-        pylon(1, 0, 0.50, -0.80, -1.35, {arg = 86, arg_value = 1, use_full_connector_position = true}, {
+        pylon(1, 0, 0.50, -0.80, -1.35, {connector = "Pylon1", use_full_connector_position = true}, {
             { CLSID = "{GBU-31}" },                                    -- GBU-31(V)1/B JDAM 2000lb
             { CLSID = "{GBU-31V3B}" },                                 -- GBU-31(V)3/B JDAM 2000lb penetrator
             { CLSID = "{GBU_32_V_2B}" },                               -- GBU-32(V)2/B JDAM 1000lb
@@ -191,7 +191,7 @@ B_2_Spirit = {
             { CLSID = "{5335D97A-35A5-4643-9D9B-026C75961E52}" },      -- CBU-97 SFW cluster
         }),
         -- Right Internal Rotary Launcher Bay (Station 2)
-        pylon(2, 0, 0.50, -0.80, 1.35, {arg = 87, arg_value = 1, use_full_connector_position = true}, {
+        pylon(2, 0, 0.50, -0.80, 1.35, {connector = "Pylon2", use_full_connector_position = true}, {
             { CLSID = "{GBU-31}" },
             { CLSID = "{GBU-31V3B}" },
             { CLSID = "{GBU_32_V_2B}" },
@@ -226,8 +226,8 @@ B_2_Spirit = {
             Mzalfa      = 4.5,
             Mzalfadt    = 0.9,
             kjx         = 2.20,
-            kjz         = 0.0011,
-            Czbe        = -0.015,
+            kjz         = 1.20,
+            Czbe        = -0.018,
             cx_gear     = 0.0035,
             cx_flap     = 0.012,
             cy_flap     = 0.35,
@@ -314,6 +314,7 @@ B_2_Spirit = {
     },
 
     ViewSettings = ViewSettings,
+    SnapViews    = SnapViews,
 
     HumanRadio = {
         frequency    = 124.0,

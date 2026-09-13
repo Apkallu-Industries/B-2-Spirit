@@ -1,0 +1,12 @@
+# Git Ignore for B-2 Spirit DCS World Module
+*.zip
+*.blend1
+*.blend2
+*.log
+*.tmp
+__pycache__/
+*.pyc
+scratch/
+.system_generated/
+.tempmediaStorage/
+.user_uploaded/

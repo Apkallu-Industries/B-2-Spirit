@@ -48,6 +48,7 @@ declare_plugin("B-2 Spirit by Apkallu Industries",
 
 mount_vfs_texture_path(current_mod_path ..  "/Theme/ME")
 mount_vfs_texture_path(current_mod_path ..  "/Textures")
+mount_vfs_texture_path(current_mod_path ..  "/Cockpit/Scripts/IndicationTextures")
 mount_vfs_texture_path("Bazar/Textures/AvionicsCommon")
 mount_vfs_model_path(current_mod_path ..  "/Shapes")
 mount_vfs_liveries_path(current_mod_path ..  "/Liveries")
@@ -57,6 +58,8 @@ local support_cockpit = current_mod_path .. '/Cockpit/Scripts/'
 dofile(current_mod_path .. "/Views.lua")
 dofile(current_mod_path .. "/B-2.lua")
 make_view_settings('B-2_Spirit', ViewSettings, SnapViews)
+make_view_settings('B-2 Spirit', ViewSettings, SnapViews)
+make_view_settings('B-2A', ViewSettings, SnapViews)
 
 make_flyable('B-2_Spirit', support_cockpit, nil, current_mod_path .. '/comm.lua')
 
