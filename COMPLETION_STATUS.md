@@ -269,22 +269,27 @@ lights_data = {
 
 ## Appendix B — Animation argument map (verify in ModelViewer)
 
-The exterior EDM already contains these animated nodes; confirm each is bound to
-the DCS-standard argument so the flight model drives it. **Treat the numbers as
-the target convention and verify against the arg actually baked into the EDM and
+The exterior EDM already contains these animated nodes. The **arg IDs below are
+the channel map documented in `README.md`** (the project's build convention).
+**Verify each against the arg actually baked into the EDM in ModelViewer and
 against the current DCS `_Common` set — re-assign in Blender if they differ.**
+Note the elevon/deceleron/gear IDs here intentionally match the README, not the
+generic DCS defaults.
 
-| Function | EDM node(s) | DCS arg (verify) |
+| Function | EDM node(s) | Documented arg (verify in ModelViewer) |
 |---|---|---|
-| Landing gear (retract) | `ar_H_NoseGear_Strut`, `ar_H_MainGear_L/R` | 0 |
-| Nose gear door | `ar_H_NoseGear_Door`, `ar_H_NoseGear_BayDoor` | 1 / 2 |
-| Ailerons (roll, via elevons) | `ar_H_Elevon_L_Out`, `ar_H_Elevon_R_Out` | 15 |
-| Elevator (pitch, via elevons) | `ar_H_Elevon_R_In` (+ paired) | 16 |
-| Rudder (yaw, via decelerons) | `ar_H_Deceleron_L`, `ar_H_Deceleron_R` | 17 |
-| Airbrake (split decelerons open) | `ar_H_Deceleron_L/R` (2nd channel) | 21 |
-| Weapon bay doors | `ar_H_BayDoor_L_Outer/Inner`, `ar_H_BayDoor_R_Outer/Inner` | 86 / 87 (matches `Pylons`) |
-| Trim (beavertail / GLAS) | `ar_H_BeaverTail_Trim` | 200-range (custom) |
-| Canopy | (add node) | 38 |
+| Nose landing gear | `ar_H_NoseGear_Strut`, `ar_H_NoseGear_Door`, `ar_H_NoseGear_BayDoor` | 0 |
+| Left main gear | `ar_H_MainGear_L` | 3 |
+| Right main gear | `ar_H_MainGear_R` | 5 |
+| Left outboard elevon (pitch/roll) | `ar_H_Elevon_L_Out` | 11 |
+| Right outboard elevon (pitch/roll) | `ar_H_Elevon_R_Out` | 12 |
+| Left split-rudder deceleron (yaw/airbrake) | `ar_H_Deceleron_L` | 13 |
+| Right split-rudder deceleron (yaw/airbrake) | `ar_H_Deceleron_R` | 14 |
+| Inboard elevons (pitch trim/roll aug.) | `ar_H_Elevon_R_In` (+ paired) | 16 |
+| Beaver-tail trim flap | `ar_H_BeaverTail_Trim` | 17 |
+| Left weapon bay doors | `ar_H_BayDoor_L_Outer/Inner` | 86 (matches `Pylons`) |
+| Right weapon bay doors | `ar_H_BayDoor_R_Outer/Inner` | 87 (matches `Pylons`) |
+| Canopy (if added) | (add node) | 38 |
 
 ## Appendix C — clickable binding template (`clickabledata.lua`)
 
