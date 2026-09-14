@@ -19,6 +19,7 @@
 
 shape_name   	   			 = "B-2_Spirit_Cockpit"
 is_EDM			   			 = true
+is_internal                  = true
 new_model_format   			 = true
 ambient_light      			 = {255,255,255}
 ambient_color_day_texture    = {72, 100, 160}
@@ -32,7 +33,7 @@ draw_pilot					 = false
 external_model_canopy_arg	 = 38
 
 use_external_views = false 
-cockpit_local_point = {6.050000, 1.180000, -0.574000}
+cockpit_local_point = {6.560000, 2.100000, -0.650000}
 day_texture_set_value   = 0.0
 night_texture_set_value = 0.1
 
