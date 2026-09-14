@@ -1,5 +1,5 @@
 livery = {
-    {"B2_Airframe_Mat", 0,  "B2_Airframe_Diffuse", true},
+    {"B2_Airframe_Mat", 0,  "B2_Airframe_Diffuse", false},
     {"B2_Airframe_Mat", 1,  "B2_Airframe_Normal", true},
     {"B2_Airframe_Mat", 13, "B2_Airframe_RoughMet", true},
 

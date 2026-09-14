@@ -139,6 +139,43 @@ local fire_z_weapons 		= 0
 local air_oride				= 0
 local detent_pos			= 0
 local pickle_pos			= 0
+local moab_drop_count       = 0
+local moab_quotes = {
+	"\"Eat Shit!\" — 13th Bomb Squadron Whiteman AFB",
+	"\"Enjoy! Direct Airmail Delivery\" — Courtesy of 509th BW",
+	"\"Present from the USA ★\" — Special Delivery via B-2 Spirit",
+	"\"Hope you like our new toy! (USAF)\" — Whiteman AFB sends its regards",
+	"\"Signed by the Grim Reapers — Reaper's Harvest\" — Whiteman AFB • 13th BS",
+}
+
+local function get_moab_inscription(drop_num)
+	local bay = (drop_num % 2 == 1) and 1 or 2
+	local prop_name = "moab_custom_inscription_bay" .. tostring(bay)
+	local custom_text = nil
+	if get_aircraft_property then
+		pcall(function() custom_text = get_aircraft_property(prop_name) end)
+	end
+	if (type(custom_text) ~= "string" or custom_text == "") and type(ordnance_manifest) == "table" then
+		local slot_key = "slot" .. tostring(bay)
+		if ordnance_manifest[slot_key] and ordnance_manifest[slot_key].text then
+			custom_text = ordnance_manifest[slot_key].text
+		end
+	end
+	if type(custom_text) ~= "string" or custom_text == "" then
+		custom_text = moab_quotes[((drop_num - 1) % #moab_quotes) + 1]
+	end
+	if #custom_text > 32 then
+		custom_text = string.sub(custom_text, 1, 32)
+	end
+	return bay, custom_text
+end
+
+pcall(function()
+	if LockOn_Options and LockOn_Options.script_path then
+		dofile(LockOn_Options.script_path .. "Systems/ordnance_manifest.lua")
+	end
+end)
+
 ------------------------------------------------------------------FUNCTION-POSTINIT---------------------------------------------------------------------------------------------------
 
 function post_initialize()
@@ -262,6 +299,11 @@ end
 		weapon_release_state = 1
 		pickle_pos = 1
 		dispatch_action(nil,PickleON)
+		if parameters.WoW:get() == 0 then
+			moab_drop_count = moab_drop_count + 1
+			local bay_id, statement = get_moab_inscription(moab_drop_count)
+			print_message_to_user(string.format("🏆 [ACHIEVEMENT UNLOCKED] 'PERSONAL STATEMENT DELIVERED' (Bay %d / Drop #%d)\n18,700 lb GBU-43/B MOAB Cleared from Internal Bay!\n\"%s\"", bay_id, moab_drop_count, statement), 12.0)
+		end
 		--print_message_to_user("COMMAND DEPRESS")
 	elseif command == 10026 and weapon_release_state == 1 then
 		weapon_release_state = 0
@@ -269,6 +311,12 @@ end
 		dispatch_action(nil,PickleOFF)
 		--print_message_to_user("COMMAND RELEASE")
 	end	
+
+	if command == PickleON and parameters.WoW:get() == 0 then
+		moab_drop_count = moab_drop_count + 1
+		local bay_id, statement = get_moab_inscription(moab_drop_count)
+		print_message_to_user(string.format("🏆 [ACHIEVEMENT UNLOCKED] 'PERSONAL STATEMENT DELIVERED' (Bay %d / Drop #%d)\n18,700 lb GBU-43/B MOAB Cleared from Internal Bay!\n\"%s\"", bay_id, moab_drop_count, statement), 12.0)
+	end
 	--ecm_state JAMMER
 	if command == ActiveJamming and ecm_state == 0 then
 		ecm_state = 1

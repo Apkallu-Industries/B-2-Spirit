@@ -1,4 +1,5 @@
 local self_ID = "B-2_Spirit"
+print(">>> [B-2 Spirit] Loading entry.lua...")
 
 declare_plugin(self_ID,
 {
@@ -15,7 +16,6 @@ declare_plugin(self_ID,
     version         = "0.0.1v",
     state           = "installed",
     info            = _("Northrop Grumman B-2 Spirit Stealth Strategic Heavy Bomber (Flyable Mod)."),
-    load_immediately = true,
 
     encyclopedia_path = current_mod_path .. '/Encyclopedia',
 
@@ -53,6 +53,7 @@ mount_vfs_texture_path(current_mod_path ..  "/Theme/ME")
 mount_vfs_texture_path(current_mod_path ..  "/Textures")
 mount_vfs_texture_path(current_mod_path ..  "/Textures/Cockpit_Donor")
 mount_vfs_texture_path(current_mod_path ..  "/Textures/Cockpit_Audit")
+mount_vfs_texture_path(current_mod_path ..  "/Textures/Weapons")
 mount_vfs_texture_path(current_mod_path ..  "/Cockpit/Scripts/IndicationTextures")
 mount_vfs_texture_path("Bazar/Textures/AvionicsCommon")
 mount_vfs_model_path(current_mod_path ..  "/Shapes")
@@ -62,6 +63,9 @@ local support_cockpit = current_mod_path .. '/Cockpit/Scripts/'
 
 -- Register flyable human cockpit contract
 make_flyable('B-2_Spirit', support_cockpit, nil, current_mod_path .. '/comm.lua')
+
+-- Load custom heavy ordnance definitions (FROZEN / ISOLATED for boot stability)
+-- dofile(current_mod_path .. "/Weapons/B2_Heavy_Ordnance.lua")
 
 -- Load aircraft descriptor and register with DCS database
 dofile(current_mod_path .. "/B-2.lua")

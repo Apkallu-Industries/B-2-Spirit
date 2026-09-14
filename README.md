@@ -33,11 +33,29 @@ Developed and maintained by **Apkallu Industries** under the *Autonomous Drone P
 - ✈️ **Authentic Airframe Scaling**: Precision 1:1 scale (52.42 m wingspan, 21.0 m length, 5.18 m height) calibrated from engineering data.
 - 🎨 **4K PBR Stealth Pipeline**: Custom Diffuse, Normal, and RoughMet maps simulating radar-absorbent material (RAM) coatings and canopy tinting.
 - 🕹️ **13 Animated Argument Channels**: Fully rigged flight surfaces, landing gear retraction, and rotary weapons bay doors compiled to native DCS `.EDM`.
-- 💣 **Dual Internal Rotary Bays**: Station 1 (Left) and Station 2 (Right), each loaded with a validated precision-guided munition set — GBU-31 / GBU-31(V)3B penetrator / GBU-32 / GBU-38 JDAM, GBU-10 & GBU-12 Paveway II LGBs, AGM-154C JSOW, and CBU-87 / CBU-97 clusters. 8 Mission Editor loadout presets included.
+- 💣 **Dual Internal Rotary Bays & Heavy MOAB Suite**: Station 1 (Left) and Station 2 (Right), loaded with validated precision munitions (JDAM, LGB, JSOW, CBU) plus the newly engineered **GBU-43/B MOAB (21,600 lb Massive Ordnance Air Blast)** with 5 personalized marker-pen graffiti variants ("Eat Shit!", "Enjoy!", "Present from USA", "New Toy", "Grim Reapers") and 11 Mission Editor presets.
 - 💺 **Three-Crew Cockpit**: Pilot in Command (left), Mission Commander / Weapons Officer (right), and a Relief Crew jump seat with an aft crew-rest area for long-duration sorties — all seats `can_be_playable`.
 - 🛡️ **Logical Damage Model**: Flying-wing damage cells (four buried engines, elevons + split decelerons, three-wheel gear) with inboard failure propagation.
 - 🎯 **Instant Action & Missions**: FL350 high-altitude ingress and Senaki-Kolkhi Runway 09 hot start missions with verified weather parameters.
 - 🎖️ **Virtual Squadron Roster**: Authentic Whiteman AFB liveries with painted military aircraft decals and low-observable stealth stencils.
+
+---
+
+## 💥 Heavy Ordnance: GBU-43/B MOAB "Personal Statement" Suite
+
+The B-2 Spirit features an authentic, reference-backed **GBU-43/B MOAB** integration with realistic blast physics and personalized marker-pen graffiti:
+
+* **Mass & Yield:** 21,600 lb (9,798 kg) gross weight with 18,700 lb (8,482 kg) cast H-6 high explosive (~11.5 tons TNT equivalent).
+* **400m Blast Radius:** Devastating overpressure wave capable of leveling surface structures and fortified compounds.
+* **5 Personalized Graffiti Variants:** Inscribed in authentic military felt-tip marker:
+  1. `GBU-43/B MOAB ('Eat Shit!' — 13th BS)`
+  2. `GBU-43/B MOAB ('Enjoy!' — Whiteman Airmail)`
+  3. `GBU-43/B MOAB ('Present from the USA ★')`
+  4. `GBU-43/B MOAB ('Hope You Like Our New Toy! — USAF')`
+  5. `GBU-43/B MOAB (13th BS 'Grim Reapers')`
+* **In-Cockpit Achievement Broadcast:** When pickled in flight, the weapon system displays a live on-screen broadcast:
+  `🏆 [ACHIEVEMENT UNLOCKED] 'PERSONAL STATEMENT DELIVERED'` announcing the exact quote written on that bomb.
+* **Technical Documentation:** See [`B-2 Spirit/Docs/MOAB_PAYLOAD_SPECIFICATION.md`](B-2%20Spirit/Docs/MOAB_PAYLOAD_SPECIFICATION.md) for full ballistics tables and code references.
 
 ---
 

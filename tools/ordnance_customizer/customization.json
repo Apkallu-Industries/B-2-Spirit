@@ -1,0 +1,32 @@
+{
+  "mission": {
+    "callsign": "GRIM 21",
+    "pilot_name": "Capt Mitchell",
+    "date": "14 SEP 2026",
+    "sortie_id": "SORTIE-B2-041"
+  },
+  "slots": {
+    "slot1": {
+      "bay": 1,
+      "serial": "MOAB-2026-0061",
+      "medium": "marker",
+      "color": [255, 255, 230],
+      "port_text": "EAT SHIT!\n— 13th Bomb Squadron",
+      "starboard_text": "FOR FREEDOM ★\nWhiteman AFB sends regards",
+      "patch": "13th_BS_Grim_Reapers_Patch.png",
+      "weathering": 0.35,
+      "seed": 1337
+    },
+    "slot2": {
+      "bay": 2,
+      "serial": "MOAB-2026-0062",
+      "medium": "chalk",
+      "color": [240, 245, 255],
+      "port_text": "ENJOY!\nDirect Airmail Delivery",
+      "starboard_text": "HOPE YOU LIKE OUR NEW TOY!\n(USAF 509th BW)",
+      "patch": "13th_BS_Grim_Reapers_Patch.png",
+      "weathering": 0.45,
+      "seed": 9001
+    }
+  }
+}

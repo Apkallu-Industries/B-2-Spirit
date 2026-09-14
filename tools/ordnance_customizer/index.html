@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B-2 Spirit — Ordnance Personalization Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;600&family=Permanent+Marker&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js and OrbitControls -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <div class="hud-overlay-grid"></div>
+
+  <header class="studio-header">
+    <div class="brand">
+      <div class="stealth-icon">▲</div>
+      <div>
+        <h1>B-2 SPIRIT <span class="accent-text">ORDNANCE PERSONALIZATION STUDIO</span></h1>
+        <p class="subtitle">509TH BOMB WING • 13TH BOMB SQUADRON "GRIM REAPERS" • WHITEMAN AFB</p>
+      </div>
+    </div>
+    <div class="sortie-badge">
+      <div class="status-indicator live"></div>
+      <div>
+        <span class="badge-label">ARMAMENT BRIDGE:</span>
+        <span class="badge-val" id="bridge-status">READY / CONNECTED</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="studio-container">
+    <!-- LEFT PANEL: 3D PREVIEW -->
+    <section class="viewport-panel">
+      <div class="panel-header">
+        <h2>3D REAL-TIME PBR ORDNANCE PREVIEW</h2>
+        <div class="camera-hint">🖱️ Left-Click: Orbit | Wheel: Zoom | Right-Click: Pan</div>
+      </div>
+      <div id="threejs-container">
+        <div class="compass-rose">
+          <span class="dir-n">NOSE ▲</span>
+          <span class="dir-s">▼ TAIL</span>
+        </div>
+      </div>
+      <div class="viewport-footer">
+        <div class="spec-tag">GBU-43/B MOAB • 21,600 LBS • HIGH EXPLOSIVE H-6 • ROTARY LAUNCHER SUITE</div>
+        <div class="view-toggles">
+          <button id="cam-side-l" class="btn-sm">Port View</button>
+          <button id="cam-side-r" class="btn-sm">Starboard View</button>
+          <button id="cam-top" class="btn-sm">Top View</button>
+          <button id="cam-reset" class="btn-sm">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: CUSTOMIZER CONTROLS -->
+    <section class="controls-panel">
+      <!-- STORE SELECTOR -->
+      <div class="control-card">
+        <label class="section-label">SELECT WEAPON PROFILE (PHASE 15)</label>
+        <div class="side-tabs">
+          <button id="store-moab-btn" class="side-btn active">GBU-43/B MOAB (21,600 LB)</button>
+          <button id="store-jdam-btn" class="side-btn">GBU-31 JDAM (2,000 LB)</button>
+        </div>
+      </div>
+
+      <!-- SLOT SELECTION -->
+      <div class="control-card slot-selector">
+        <label class="section-label">SELECT ACTIVE INTERNAL BAY</label>
+        <div class="slot-tabs">
+          <button id="slot1-tab" class="slot-tab active">
+            <span class="bay-id">BAY 1 (LEFT)</span>
+            <span class="slot-title" id="slot1-summary">EAT SHIT!</span>
+          </button>
+          <button id="slot2-tab" class="slot-tab">
+            <span class="bay-id">BAY 2 (RIGHT)</span>
+            <span class="slot-title" id="slot2-summary">ENJOY!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- CASING SIDE TOGGLE -->
+      <div class="control-card">
+        <div class="flex-between">
+          <label class="section-label">CASING SIDE</label>
+          <span class="badge-tag" id="active-side-badge">PORT (LEFT CASING)</span>
+        </div>
+        <div class="side-tabs">
+          <button id="side-port-btn" class="side-btn active">PORT SIDE</button>
+          <button id="side-stbd-btn" class="side-btn">STARBOARD SIDE</button>
+        </div>
+      </div>
+
+      <!-- MEDIUM & TOOL SELECTOR -->
+      <div class="control-card">
+        <label class="section-label">PHYSICAL WRITING MEDIUM (PBR SYNTHESIS)</label>
+        <div class="medium-grid">
+          <button class="medium-btn active" data-medium="marker">
+            <span class="med-icon">✒️</span>
+            <span class="med-name">Felt-Tip Marker</span>
+            <span class="med-desc">High sheen, ink bleed</span>
+          </button>
+          <button class="medium-btn" data-medium="chalk">
+            <span class="med-icon">🖍️</span>
+            <span class="med-name">Chalk / China</span>
+            <span class="med-desc">Rough, matte, porous</span>
+          </button>
+          <button class="medium-btn" data-medium="grease">
+            <span class="med-icon">✏️</span>
+            <span class="med-name">Grease Pencil</span>
+            <span class="med-desc">Waxy impasto relief</span>
+          </button>
+          <button class="medium-btn" data-medium="stencil">
+            <span class="med-icon">🔲</span>
+            <span class="med-name">Spray Stencil</span>
+            <span class="med-desc">Proud +0.03mm bevel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- INSCRIBE / SIGN TEXT -->
+      <div class="control-card">
+        <div class="flex-between">
+          <label class="section-label">PERSONAL INSCRIPTION</label>
+          <span class="char-count" id="char-counter">0 / 32 CHARS (LINE 1)</span>
+        </div>
+        <textarea id="inscription-input" rows="3" placeholder="Enter personal message to target...&#10;e.g. Eat Shit! — 13th Bomb Sqn"></textarea>
+
+        <div class="color-palette">
+          <label class="sub-label">INK COLOR:</label>
+          <button class="color-chip active" style="background:#FFFFE6;" data-color="255,255,230" title="Chalk White"></button>
+          <button class="color-chip" style="background:#FFE600;" data-color="255,230,0" title="Hazard Yellow"></button>
+          <button class="color-chip" style="background:#E6F0FF;" data-color="230,240,255" title="Air Force Blue"></button>
+          <button class="color-chip" style="background:#FF4444;" data-color="255,68,68" title="Signal Red"></button>
+          <button class="color-chip" style="background:#1A1A1A;" data-color="26,26,26" title="Stencil Black"></button>
+        </div>
+      </div>
+
+      <!-- SQUADRON INSIGNIA -->
+      <div class="control-card">
+        <label class="section-label">SQUADRON ARTWORK / PATCH</label>
+        <div class="patch-selector">
+          <label class="patch-item active">
+            <input type="radio" name="patch" value="13th_BS_Grim_Reapers_Patch.png" checked>
+            <img src="/textures/13th_BS_Grim_Reapers_Patch.png" alt="13th BS Grim Reapers">
+            <span>13th BS Grim Reapers</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- PROCEDURAL WEAR & MISSION DATA -->
+      <div class="control-card">
+        <div class="flex-between">
+          <label class="section-label">PROCEDURAL WEAR & LOGISTICS</label>
+          <span class="badge-tag" id="wear-label">TRANSIT SCUFFS (35%)</span>
+        </div>
+        <input type="range" id="wear-slider" min="0" max="100" value="35">
+
+        <div class="logistics-grid">
+          <div>
+            <label class="sub-label">CALLSIGN</label>
+            <input type="text" id="callsign-input" value="GRIM 21">
+          </div>
+          <div>
+            <label class="sub-label">PILOT NAME</label>
+            <input type="text" id="pilot-input" value="Capt Mitchell">
+          </div>
+          <div>
+            <label class="sub-label">SERIAL NUMBER</label>
+            <input type="text" id="serial-input" value="MOAB-2026-0061">
+          </div>
+          <div>
+            <label class="sub-label">SORTIE ID</label>
+            <input type="text" id="sortie-input" value="SORTIE-B2-041">
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMIT BUTTON -->
+      <div class="commit-container">
+        <button id="btn-commit" class="btn-commit">
+          <span class="commit-icon">⚡</span>
+          <span>COMMIT LOADOUT TO DCS WORLD</span>
+        </button>
+        <div id="commit-feedback" class="feedback-msg"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
