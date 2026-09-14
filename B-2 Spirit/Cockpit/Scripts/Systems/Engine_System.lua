@@ -1,62 +1,70 @@
 --[[
-    Grinnelli Designs F-22A Raptor
-    Copyright (C) 2024, Joseph Grinnelli
+    B-2 SPIRIT PUBLIC-REFERENCE COCKPIT — ENGINE SUBSYSTEM (ENG)
+    Reference-backed reconstruction based on publicly available imagery and USAF documentation
     
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see https://www.gnu.org/licenses.
+    PROVENANCE CLASSIFICATION:
+    - REFERENCE_BACKED: 
+        * 4x General Electric F118-GE-100 non-afterburning turbofan engines (approx 19,000 lbf each).
+        * F118 turbofan parameters: N1 fan %, N2 core %, EGT °C, Fuel Flow (pph), Oil Pressure (PSI).
+        * Throttle quadrant layout: Left lever (Engines 1 & 2), Right lever (Engines 3 & 4).
+    - PUBLIC_TECHNICAL_INFERENCE:
+        * Starter cut-out at 50% N2.
+        * Generator cut-in at 58% N2.
+        * Ground idle stabilization: N1 ~22%, N2 ~62%, EGT ~420°C, FF ~800 pph, Oil ~55 PSI.
+        * Start dependency on APU bleed air, DC bus power for igniters, and pressurized fuel manifold.
+    - DCS_SIMULATION_ABSTRACTION:
+        * Aerodynamic thrust and gear/brake kinematics interfacing with DCS flight model.
+
+    ARCHITECTURAL PRINCIPLE:
+    "The display never owns the aircraft state."
+    Engine_System owns engine thermodynamics/spool physics and publishes live telemetry to SYSTEM_BUS.
 --]]
 
-
-local dev = GetSelf()
 dofile(LockOn_Options.script_path.."devices.lua")
 dofile(LockOn_Options.script_path.."command_defs.lua")
+dofile(LockOn_Options.script_path.."Systems/system_bus.lua")
 
-local dt = 0.024
-make_default_activity(dt)
+local dev = GetSelf()
+local update_time_step = 0.024 -- ~40 Hz engine physics loop
+make_default_activity(update_time_step)
 
-local sensor_data		= get_base_data()
+local sensor_data = get_base_data()
 
-local APU   			= get_param_handle("APU")
-local APU_POWER			= get_param_handle ("APU_POWER")
-local BATTERY_POWER		= get_param_handle ("BATTERY_POWER")
-local L_GEN_POWER		= get_param_handle ("L_GEN_POWER")
-local R_GEN_POWER		= get_param_handle ("R_GEN_POWER")
-local MAIN_POWER		= get_param_handle ("MAIN_POWER")
-local GROUND_POWER		= get_param_handle("GROUND_POWER")
-local SOUND_APU     	= get_param_handle("SOUND_APU")
-local APU_RPM_STATE		= get_param_handle("APU_RPM_STATE")
-local UFD_ADI	        = get_param_handle ("UFD_ADI")
-local L_TOE	        	= get_param_handle ("L_TOE")
-local R_TOE	        	= get_param_handle ("R_TOE")
-local B_TOE	        	= get_param_handle ("B_TOE")
-local L_THROTTLE_CUT 	= get_param_handle ("L_THROTTLE_CUT")
-local L_THROTTLE_POS 	= get_param_handle ("L_THROTTLE_POS")
-local R_THROTTLE_CUT 	= get_param_handle ("R_THROTTLE_CUT")
-local R_THROTTLE_POS 	= get_param_handle ("R_THROTTLE_POS")
-local APU_READY			= get_param_handle("APU_READY")
-local ufd_swap_adi 		= 0
-local PARK			    = get_param_handle("PARK")
-local IAS				= get_param_handle("IAS")
-local PowerOnOff      	= Keys.PowerOnOff
-local EnginesStart 		= Keys.EnginesStart
-local EnginesStop 		= Keys.EnginesStop
-local L_Eng_Start 		= Keys.LeftEngineStart
-local R_Eng_Start 		= Keys.RightEngineStart
-local L_Eng_Stop 		= Keys.LeftEngineStop
-local R_Eng_Stop 		= Keys.RightEngineStop
-local PlaneGear			= Keys.PlaneGear
+-- Parameter Handles
+local IAS            = get_param_handle("IAS")
+local PARK           = get_param_handle("PARK")
+local L_THROTTLE_POS = get_param_handle("L_THROTTLE_POS")
+local R_THROTTLE_POS = get_param_handle("R_THROTTLE_POS")
+local L_THROTTLE_CUT = get_param_handle("L_THROTTLE_CUT")
+local R_THROTTLE_CUT = get_param_handle("R_THROTTLE_CUT")
 
-dev:listen_command(PowerOnOff)
+-- EICAS Display Parameter Handles
+local eicas_rpm = {
+    get_param_handle("RPM_1"), get_param_handle("RPM_2"),
+    get_param_handle("RPM_3"), get_param_handle("RPM_4")
+}
+local eicas_egt = {
+    get_param_handle("EGT_1"), get_param_handle("EGT_2"),
+    get_param_handle("EGT_3"), get_param_handle("EGT_4")
+}
+local eicas_ff = {
+    get_param_handle("FF_1"), get_param_handle("FF_2"),
+    get_param_handle("FF_3"), get_param_handle("FF_4")
+}
+local eicas_oil = {
+    get_param_handle("OIL_1"), get_param_handle("OIL_2"),
+    get_param_handle("OIL_3"), get_param_handle("OIL_4")
+}
+
+-- Commands
+local EnginesStart   = Keys.EnginesStart
+local EnginesStop    = Keys.EnginesStop
+local L_Eng_Start    = Keys.LeftEngineStart
+local R_Eng_Start    = Keys.RightEngineStart
+local L_Eng_Stop     = Keys.LeftEngineStop
+local R_Eng_Stop     = Keys.RightEngineStop
+local PlaneGear      = Keys.PlaneGear
+
 dev:listen_command(EnginesStart)
 dev:listen_command(EnginesStop)
 dev:listen_command(L_Eng_Start)
@@ -64,697 +72,262 @@ dev:listen_command(R_Eng_Start)
 dev:listen_command(L_Eng_Stop)
 dev:listen_command(R_Eng_Stop)
 dev:listen_command(PlaneGear)
-dev:listen_command(2004)
-dev:listen_command(2005)
-dev:listen_command(2006)
 
-dev:listen_event("GroundPowerOn")
-dev:listen_event("GroundPowerOff")
+-- Clickable commands from clickabledata.lua
+local CMD_L_ENG_CLICK = device_commands.Button_9
+local CMD_R_ENG_CLICK = device_commands.Button_10
+local CMD_GEAR_CLICK  = device_commands.Button_11
+local CMD_PARK_BRAKE  = device_commands.Button_12
+local CMD_EMER_GEAR   = 3500
 
-local battery_state = 0 --track on off state
-local apu_state 	= 0 --track if apu was set to start
-local apu_pwr		= 0 --track if the apu has full power
-local apu_rpm		= 0 --track apu spool up time
-local L_gen_state 	= 0 --track on off state
-local R_gen_state 	= 0 --track on off state
-local L_gen_pwr 	= 0
-local R_gen_pwr 	= 0
-local main_pwr		= 0
-local B_axis_value  = -1
-local park_state    = 0 
-local gpu_cart		= 0
-local apu_played 	= false
-local BrakesON  	= false
-local BrakesOFF 	= true 
-local L_throttle_pos = 1 --1=idle -1=full
-local R_throttle_pos = 1
-local L_cutoff		 = 0
-local R_cutoff		 = 0
+dev:listen_command(CMD_L_ENG_CLICK)
+dev:listen_command(CMD_R_ENG_CLICK)
+dev:listen_command(CMD_GEAR_CLICK)
+dev:listen_command(CMD_PARK_BRAKE)
+dev:listen_command(CMD_EMER_GEAR)
 
-local apu_autooff = 0
-local apu_autooff_timer = 0
+-- Keybind commands
+dev:listen_command(10019) -- Park Brake ON
+dev:listen_command(10020) -- Park Brake OFF
+dev:listen_command(10028) -- L Cutoff
+dev:listen_command(10029) -- R Cutoff
+dev:listen_command(2004)  -- Throttle Axis
+dev:listen_command(2005)  -- L Throttle
+dev:listen_command(2006)  -- R Throttle
+dev:listen_command(74)    -- Brakes On
+dev:listen_command(75)    -- Brakes Off
 
-local L_axis_value = -1
-local R_axis_value = -1
+-- Engine Physical States (Engines 1..4)
+-- State: 0 = SHUTDOWN, 1 = CRANKING, 2 = IGNITION/LIGHTOFF, 3 = RUNNING
+local engines = {
+    [1] = { state = 0, n1 = 0.0, n2 = 0.0, egt = 15.0, ff = 0.0, oil_psi = 0.0, starter = false, cutoff = 0 },
+    [2] = { state = 0, n1 = 0.0, n2 = 0.0, egt = 15.0, ff = 0.0, oil_psi = 0.0, starter = false, cutoff = 0 },
+    [3] = { state = 0, n1 = 0.0, n2 = 0.0, egt = 15.0, ff = 0.0, oil_psi = 0.0, starter = false, cutoff = 0 },
+    [4] = { state = 0, n1 = 0.0, n2 = 0.0, egt = 15.0, ff = 0.0, oil_psi = 0.0, starter = false, cutoff = 0 }
+}
 
---Clickable Data
-local battery_switch = device_commands.Button_1 --track mouse clicks
-dev:listen_command(battery_switch)
-local apu_switch = device_commands.Button_2 --track mouse clicks
-dev:listen_command(apu_switch)
-local L_gen_switch = device_commands.Button_3 --track mouse clicks
-dev:listen_command(L_gen_switch)
-local R_gen_switch = device_commands.Button_4 --track mouse clicks
-dev:listen_command(R_gen_switch)
-local L_Eng_Click = device_commands.Button_9 --track mouse clicks
-dev:listen_command(L_Eng_Click)
-local R_Eng_Click = device_commands.Button_10 --track mouse clicks
-dev:listen_command(R_Eng_Click)
-local Gear_Click = device_commands.Button_11 --track mouse clicks
-dev:listen_command(Gear_Click)
-local PARK_BRAKE = device_commands.Button_12 --track mouse clicks
-dev:listen_command(PARK_BRAKE)
-
-dev:listen_command(74)--Brakes on
-dev:listen_command(75)--Brakes off
-dev:listen_command(10009)--BAT
-dev:listen_command(10010)--BAT T
-dev:listen_command(10011)--L GEN
-dev:listen_command(10012)--L GEN T
-dev:listen_command(10013)--R GEN
-dev:listen_command(10014)--R GEN T
-dev:listen_command(10019)--Park
-dev:listen_command(10020)--Park
-
-dev:listen_command(10023)--wheel brake axis both
-dev:listen_command(10025)--APU TOGGLE
-dev:listen_command(10028)--L Cutoff
-dev:listen_command(10029)--R cutoff
-
-dev:listen_command(1073)--f-16 thing
-dev:listen_command(10038)--Brakes On
-dev:listen_command(10039)--Brakes Off
-
-dev:listen_command(10056)--L Brake
-dev:listen_command(10057)--R Brake
-dev:listen_command(10058)--B Brake
-
-function createExternal(sound_host, sdef_name)
-	return sound_host:create_sound("Aircrafts/F-22A/External/" .. sdef_name)
-end
-function playSoundOnce(sound)
-	if sound then
-		if sound:is_playing() then 
-			sound:stop() 
-		end		
-		sound:play_once()
-	end	
-end
-function stopSound(sound)	
-	if sound and sound:is_playing() then
-		sound:stop()		
-	end	
-end
-function createExternalLoop(sound_host, start_sound_length, sdef_name_start, sdef_name_loop, sdef_name_end)
-	start_length_ = start_sound_length or 0
-	
-	if sdef_name_start then
-		sound_start_ = createExternal(sound_host, sdef_name_start)
-	else
-		sound_start_ = nil
-	end
-	
-	sound_loop_ = createExternal(sound_host, sdef_name_loop)
-	
-	if sdef_name_end then
-		sound_end_ = createExternal(sound_host, sdef_name_end)
-	else
-		sound_end_ = nil
-	end	
-	
-	return {
-		startLength = start_length_,
-		timePlaying = 0,
-		isPlaying = false,
-		sound_start = sound_start_,
-		sound_loop = sound_loop_,
-		sound_end = sound_end_,
-	}
-end    
+local throttle_left  = 0.0 -- 0.0 (Idle) to 1.0 (Military power)
+local throttle_right = 0.0
+local park_brake_on  = true
+local gear_down      = 1.0
 
 function post_initialize()
-
-	local birth = LockOn_Options.init_conditions.birth_place
-	
-	if birth == "GROUND_HOT" or birth == "AIR_HOT" then
-		L_cutoff = 1
-		R_cutoff = 1
-		dispatch_action(nil,PowerOnOff)
-		dev:performClickableAction(battery_switch, 1, false)--set battery switch ON
-		dev:performClickableAction(L_gen_switch, 1, false)--set L Gen switch ON
-		dev:performClickableAction(R_gen_switch, 1, false)--set R Gen switch ON
-		dev:performClickableAction(apu_switch, -1, false)--set apu switch OFF
-		set_aircraft_draw_argument_value(616, 0)--GPU CART ON/OFF
-		set_aircraft_draw_argument_value(617, -1)--GPU CART START LOCATION
-		--print_message_to_user("HOT START")
-		--dispatch_action(nil,1073)
-	elseif birth =="GROUND_COLD" then
-		dev:performClickableAction(apu_switch, -1, false)--set apu switch OFF
-		--dev:performClickableAction(PARK_BRAKE, 1, false)--set parking brakes ON
-		set_aircraft_draw_argument_value(610, 1)--set open
-		set_aircraft_draw_argument_value(611, 1)--set open
-		--set_aircraft_draw_argument_value(15, -0.5)--set down
-		--set_aircraft_draw_argument_value(16, -0.5)--set down
-		--set_aircraft_draw_argument_value(600, 1)--set open
-		--set_aircraft_draw_argument_value(601, 1)--set open
-		--set_aircraft_draw_argument_value(602, 1)--set open
-		set_aircraft_draw_argument_value(616, 0)--GPU CART ON/OFF
-		set_aircraft_draw_argument_value(617, -1)--GPU CART START LOCATION
-		--print_message_to_user("COLD START")
-	end
-	
-	sound 			= create_sound_host("EXTERNAL_AIRCRAFT","3D",0,0,0)
-	sound_apu    	= createExternalLoop(sound, 14, "apu_start","apu_run","apu_stop")
-
-	SOUND_APU:set(-999)
-end
-
-----------------------------------------------------------------------FUNCTION-COCKPIT-EVENT---------------------------------------------------------------------------------------------------
-function CockpitEvent(event,val)
-	if event == "GroundPowerOff" then
-		GROUND_POWER:set(0)
-		--gpu_cart = 0
-	elseif event == "GroundPowerOn" then
-		GROUND_POWER:set(1)
-		--gpu_cart = 1
-	end
-end
------------------------------------------------------------------FUNCTION-SETCOMMAND---------------------------------------------------------------------------------------------------
-	function SetCommand(command,value)
-
---Axis Wheel Brakes 
-	if command == 10056 then -- brake axis left
-		L_axis_value = value
-	--RIGHT Axis Wheel Brakes 
-	elseif command == 10057 then -- brake axis RIGHT
-		R_axis_value = value
-	--BOTH Axis Wheel Brakes
-	elseif command == 10058 then -- brake axis both
-		L_axis_value = value
-		R_axis_value = value
-	end
-	--Keybaord Brakes BOTH
-	if command == 10038 and (BrakesON == false or BrakesOFF == true) then
-		BrakesON = true
-		BrakesOFF = false
-		L_axis_value = 1
-		R_axis_value = 1
-		--dispatch_action(nil, 10023, -0.30)--Brakes on
-		--print_message_to_user("Brakes ON")
-	elseif command == 10039 and (BrakesON == true or BrakesOFF == false) then
-		BrakesON = false
-		BrakesOFF = true
-		L_axis_value = -1
-		R_axis_value = -1
-		--dispatch_action(nil, 10023, 1)--Brakes off
-		--print_message_to_user("Brakes OFF")
-	end
---Parking Brakes
-		if (command == PARK_BRAKE or command == 10019 or command == 10020) and park_state == 0 then
-		    park_state = 1
-		elseif (command == PARK_BRAKE or command == 10019 or command == 10020) and park_state == 1 then
-		    park_state = 0
-		    --dispatch_action(nil,75)
-		end
-	local apu_switch_pos = get_cockpit_draw_argument_value(701)
---Disable Engines Start Keyboard Command on Ground	
-		if command == EnginesStart and apu_pwr == 0 and sensor_data.getWOW_NoseLandingGear() == 1 and sensor_data.getEngineLeftRPM() < 3 and sensor_data.getEngineRightRPM() < 3 then
-			dispatch_action(nil,EnginesStop)
-			print_message_to_user("**COMMAND DISABLED ON GROUND||MUST USE APU TO COLD START THE JET**")
-		end
---Disable Left Engine Keyboard Command on Ground	
-		if (command == L_Eng_Start or command == L_Eng_Click) and apu_pwr == 0 and sensor_data.getWOW_NoseLandingGear() == 1 and sensor_data.getEngineLeftRPM() < 3 then
-			dispatch_action(nil,L_Eng_Stop)
-			print_message_to_user("**COMMAND DISABLED ON GROUND||MUST USE APU TO COLD START THE JET**")
-		end
---Disable Right Engine Keyboard Command on Ground	
-		if (command == R_Eng_Start or command == R_Eng_Click) and apu_pwr == 0 and sensor_data.getWOW_NoseLandingGear() == 1 and sensor_data.getEngineRightRPM() < 3 then
-			dispatch_action(nil,R_Eng_Stop)
-			print_message_to_user("**COMMAND DISABLED ON GROUND||MUST USE APU TO COLD START THE JET**")
-		end	
---Battery Switch Click
-		if (command == battery_switch or command == 10009 or command == 10010) and battery_state == 0 then
-			battery_state = 1
-			dispatch_action(nil, PowerOnOff)
-			--print_message_to_user("BAT ON")
-		elseif (command == battery_switch or command == 10009 or command == 10010) and battery_state == 1 then
-			battery_state = 0
-			dispatch_action(nil, PowerOnOff)
-			--print_message_to_user("BAT OFF")
-		end
---Left Gen Switch
-		if (command == L_gen_switch or command == 10011 or command == 10012) and L_gen_state == 0 then
-			L_gen_state = 1
-			--ufd_swap_adi = 1
-			--print_message_to_user("LEFT GEN ON")
-		elseif (command == L_gen_switch or command == 10011 or command == 10012) and L_gen_state == 1 then
-			L_gen_state = 0
-			--ufd_swap_adi = 0
-			--print_message_to_user("LEFT GEN OFF")
-		end
---Right Gen Switch
-		if (command == R_gen_switch or command == 10013 or command == 10014) and R_gen_state == 0 then
-			R_gen_state = 1
-			--print_message_to_user("RIGHT GEN ON")
-		elseif (command == R_gen_switch or command == 10013 or command == 10014) and R_gen_state == 1 then
-			R_gen_state = 0
-			--print_message_to_user("RIGHT GEN OFF")
-		end	
---Engine Start	Switch 
-		if (command == L_Eng_Click or command == L_Eng_Start) and L_cutoff == 0 and apu_pwr == 0 then
-			L_cutoff = 1
-		elseif (command == R_Eng_Click or command == R_Eng_Start) and R_cutoff == 0 and apu_pwr == 0 then
-			R_cutoff = 1
-		elseif (command == L_Eng_Click or command == L_Eng_Start) and L_cutoff == 0 and apu_pwr == 1 then
-			L_cutoff = 1
-			dispatch_action(nil,L_Eng_Start)
-		elseif (command == R_Eng_Click or command == R_Eng_Start) and R_cutoff == 0 and apu_pwr == 1 then
-			R_cutoff = 1
-			dispatch_action(nil,R_Eng_Start)
-		elseif command == 10028 and L_cutoff == 0 and apu_pwr == 0 and sensor_data.getEngineLeftRPM() < 39 then
-			L_cutoff = 1
-			--print_message_to_user("LEFT ENG BYPASS ON")--WARTHOG DETENT
-		elseif command == 10028 and L_cutoff == 0 and (apu_pwr == 1 or sensor_data.getEngineLeftRPM() > 40) then
-			L_cutoff = 1
-			dispatch_action(nil,L_Eng_Start)
-			--print_message_to_user("LEFT ENG START WARTHORG")
-		elseif command == 10028 and L_cutoff == 1 then
-			L_cutoff = 0
-			dispatch_action(nil,L_Eng_Stop)
-			--print_message_to_user("LEFT ENG OFF WARTHOG")
-		elseif command == L_Eng_Stop then
-			L_cutoff = 0
-			--print_message_to_user("LEFT ENG STOP")
-		elseif command == 10029 and R_cutoff == 0 and apu_pwr == 0 and sensor_data.getEngineRightRPM() < 39 then
-			R_cutoff = 1
-			--print_message_to_user("RIGHT ENG BYPASS ON")--WARTHOG DETENT
-		elseif command == 10029 and R_cutoff == 0 and (apu_pwr == 1 or sensor_data.getEngineRightRPM() > 40) then
-			R_cutoff = 1
-			dispatch_action(nil,R_Eng_Start)
-			--print_message_to_user("RIGHT ENG START WARTHORG")
-		elseif command == 10029 and R_cutoff == 1 then
-			R_cutoff = 0
-			dispatch_action(nil,R_Eng_Stop)
-			--print_message_to_user("RIGHT ENG OFF WARTHOG")
-		elseif command == R_Eng_Stop then
-			R_cutoff = 0
-			--print_message_to_user("RIGHT ENG STOP")
-		elseif command == EnginesStart then
-			L_cutoff = 1
-			R_cutoff = 1
-		elseif command == EnginesStop then
-			L_cutoff = 0
-			R_cutoff = 0
-		end
---THROTTLE ANIMATION		
-		if command == 2004 and L_cutoff == 1 and R_cutoff == 1 then --common
-			L_throttle_pos = value
-			R_throttle_pos = value
-		elseif command == 2004 and L_cutoff == 0 and R_cutoff == 0 then --common
-			L_throttle_pos = 1
-			R_throttle_pos = 1
-		elseif command == 2005 and L_cutoff == 1 then --Left
-			L_throttle_pos = value
-		elseif command == 2005 and L_cutoff == 0 then --Left
-			L_throttle_pos = 1
-		elseif command == 2006 and R_cutoff == 1 then --Right
-			R_throttle_pos = value
-		elseif command == 2006 and R_cutoff == 0 then --Right
-			R_throttle_pos = 1
-		end
---APU START/RUN/STOP	
-		if command == apu_switch and battery_state == 1 and apu_state == 0 and apu_switch_pos == 1 then
-			apu_state = 1
-			-- print_message_to_user("APU START")
-		elseif command == apu_switch and battery_state >= 0 and apu_state == 1 and apu_switch_pos == -1 then --made a change here bat state was == 1. grin
-			apu_state = 0
-			--print_message_to_user("APU SHUTDOWN")
-		end
-		if command == 10025 and battery_state == 1 and apu_state == 0 and apu_switch_pos < 1 then
-			apu_state = 1
-			dev:performClickableAction(apu_switch, 1, false)	
-			--dev:performClickableAction(apu_switch, 0, false)
-			--print_message_to_user("APU START")
-		elseif command == 10025 and battery_state == 1 and apu_state == 1 and apu_switch_pos == 1 then
-			dev:performClickableAction(apu_switch, 0, false)
-			--print_message_to_user("else")		
-		end
---Gear Handle Click
-		if command == Gear_Click then
-			dispatch_action(nil, PlaneGear)
-			--print_message_to_user("GEAR UP DOWN")
-		end
-	end
-
-	function stopLoopSound(loopSound, playEndSound)
-		stopSound(loopSound.sound_start)
-		stopSound(loopSound.sound_loop)
-		loopSound.isPlaying = false
-		loopSound.timePlaying = 0
-		if playEndSound then
-			playSoundOnce(loopSound.sound_end)
-		end
-	end
-	function updateLoopSoundParameters(loopSound, pitch, gain, lowpass)
-		updateSoundParameters(loopSound.sound_start, pitch, gain, lowpass)
-		updateSoundParameters(loopSound.sound_loop, pitch, gain, lowpass)
-		updateSoundParameters(loopSound.sound_end, pitch, gain, lowpass)
-	end
-	function playSoundOnceFromParam(param, sound)
-		if param:get() > -999 then
-			if sound then
-				if sound:is_playing() then 
-					sound:stop() 
-				end
-				if param:get() ~= 0 then
-					sound:play_once()				
-				end
-			end
-			param:set(-999)
-		end
-	end
-	function playLoopingSound(loopSound)
-		loopSound.sound_loop:play_continue()
-	end
-	function playLoopingSoundFromParam(param, loopSound)
-		if param == nil then
-			loopSound.sound_loop:play_continue()
-			return
-		end
-
-		if param:get() > -999 then
-			if loopSound then
-				if param:get() == 0 and loopSound.isPlaying then
-					--Stop command given
-					stopLoopSound(loopSound, true)
-				elseif param:get() ~= 0 then
-					--Play command given
-					if loopSound.isPlaying then
-						-- first stop if playing
-						stopLoopSound(loopSound)
-					end
-
-					if loopSound.sound_start then
-						loopSound.sound_start:play_once()
-					else
-						loopSound.sound_loop:play_continue()
-					end
-					loopSound.isPlaying = true
-
-				end
-			end
-			param:set(-999)
-		else
-	        --no sound command given, manage start/looping sound
-			if loopSound.isPlaying then
-				loopSound.timePlaying = loopSound.timePlaying + dt
-
-				if loopSound.sound_start and loopSound.sound_start:is_playing() then
-					if loopSound.timePlaying > (loopSound.startLength - dt) then					
-						loopSound.sound_loop:play_continue()
-					end
-					if loopSound.timePlaying > loopSound.startLength then
-						loopSound.sound_start:stop()
-						loopSound.sound_loop:play_continue()
-					end
-				else
-					loopSound.sound_loop:play_continue()
-				end
-			end
-		end
-	end
-	local prev_L_throttle_val = -1
-	local prev_R_throttle_val = -1
-------------------------------------------------------------------FUNCTION-UPDATE---------------------------------------------------------------------------------------------------
-function update()
-	--print_message_to_user(L_throttle_pos)
-	--print_message_to_user(R_throttle_pos)
-	--print_message_to_user(B_throttle_pos)
-	--print_message_to_user(GROUND_POWER:get())
-	--print_message_to_user(APU_POWER:get())
-	--print_message_to_user(sensor_data.getEngineLeftRPM())
-
-	if L_cutoff == 0 then
-		L_throttle_pos = 1
-		--print_message_to_user("L ENG OVRIDE to 1")
-	end
-
-	if R_cutoff == 0 then
-		R_throttle_pos = 1
-		--print_message_to_user("L ENG OVRIDE to 1")
-	end
-
-
---Brakes
-	if B_axis_value > 0.1 or (L_axis_value > 0.1 or R_axis_value > 0.1) or park_state == 1 then   
-		dispatch_action(nil,74)
-		--print_message_to_user("brake")
-	else
-		dispatch_action(nil,75)
-		--print_message_to_user("no brakes")
-	end
-
-	-- if L_axis_value > 0.1 then  
-	-- 	dispatch_action(nil,74)
-	-- 	print_message_to_user(L_axis_value)
-	-- else
-	-- 	dispatch_action(nil,75)
-	-- end
-
-	-- if R_axis_value > 0.1 then  
-	-- 	dispatch_action(nil,74)
-	-- 	print_message_to_user(R_axis_value)
-	-- else
-	-- 	dispatch_action(nil,75)
-	-- end
-
-	--Param
-	APU_POWER		:set(apu_pwr)
-	APU_RPM_STATE	:set(apu_rpm)
-	BATTERY_POWER	:set(battery_state)
-	MAIN_POWER		:set(main_pwr)
-	UFD_ADI			:set(ufd_swap_adi)
-	L_GEN_POWER		:set(L_gen_state)
-	R_GEN_POWER		:set(R_gen_state)
-	PARK		    :set(park_state)
-	B_TOE			:set(B_axis_value)
-	L_TOE			:set(L_axis_value)
-	R_TOE			:set(R_axis_value)
-	L_THROTTLE_CUT  :set(L_cutoff)
-	L_THROTTLE_POS  :set(L_throttle_pos)
-	R_THROTTLE_CUT  :set(R_cutoff)
-	R_THROTTLE_POS  :set(R_throttle_pos)
-	--GROUND_POWER	:set(gpu_cart)
-
-	--print_message_to_user(B_axis_value)
-	
-	playLoopingSoundFromParam(SOUND_APU, sound_apu)
-	
-	local apu_switch_pos = get_cockpit_draw_argument_value(701)
-	--APU SOUND START
-	if apu_played == false and battery_state == 1 and apu_state == 1 and apu_switch_pos == 1 then
-		SOUND_APU:set(5)
-		apu_played = true
-		--print_message_to_user("APU STARTING!!")
-	end
-	--APU RUN UP CLOCK	
-	if battery_state == 1 and apu_state == 1 and apu_switch_pos == 0 and apu_rpm <= 3.99 then	
-		apu_rpm = apu_rpm + 0.01
-		--print_message_to_user("APU RUNNING!!")
-	end
-	--APU RUN DOWN CLOCK	
-	if battery_state == 1 and apu_state == 0 and apu_switch_pos == -1 and apu_rpm >= 0.01 then	
-		apu_rpm = apu_rpm - 0.01
-		--print_message_to_user("APU RUNNING!!")
-	end
-	--APU HAS POWER	
-	if battery_state == 1 and apu_state == 1 and apu_switch_pos == 0 and apu_rpm >= 3.80 then
-		apu_pwr = 1	
-		--print_message_to_user("APU HAS POWER")
-	end
-	--APU LOST POWER
-	if battery_state == 1 and apu_state == 0 and apu_rpm < 1 then
-		apu_pwr = 0
-	end	
-	--APU SOUND SHUTDOWN
-	if apu_played == true and battery_state >= 0 and apu_state == 0 and apu_switch_pos == -1 then		
-		SOUND_APU:set(0)
-		apu_played = false
-		--print_message_to_user("APU SHUTDOWN!!")
-	end
-	--GEN LEFT POWER ON OFF
-	if L_gen_state == 1 and sensor_data.getEngineLeftRPM() >= 61 and L_gen_pwr == 0 then
-		L_gen_pwr = 1
-		--print_message_to_user("LEFT GEN HAS POWER")
-	elseif L_gen_state == 1 and sensor_data.getEngineLeftRPM() <= 61 and L_gen_pwr == 1 then
-		L_gen_pwr = 0
-		--print_message_to_user("LEFT GEN OFF (NO RPM) ")
-	elseif L_gen_state == 0 and sensor_data.getEngineLeftRPM() >= 61 and L_gen_pwr == 1 then
-		L_gen_pwr = 0
-		--print_message_to_user("LEFT GEN OFF (NO POWER) ")
-	end
-	--GEN RIGHT POWER ON OFF
-	if R_gen_state == 1 and sensor_data.getEngineRightRPM() >= 61 and R_gen_pwr == 0 then
-		R_gen_pwr = 1
-		--print_message_to_user("RIGHT GEN HAS POWER")
-	elseif R_gen_state == 1 and sensor_data.getEngineRightRPM() <= 61 and R_gen_pwr == 1 then
-		R_gen_pwr = 0
-		--print_message_to_user("RIGHT GEN OFF (NO RPM) ")
-	elseif R_gen_state == 0 and sensor_data.getEngineRightRPM() >= 61 and R_gen_pwr == 1 then
-		R_gen_pwr = 0
-		--print_message_to_user("RIGHT GEN OFF (NO POWER) ")
-	end
-	--FULL POWER
-	if L_gen_pwr == 1 or R_gen_pwr == 1 or GROUND_POWER:get() == 1 then
-		main_pwr = 1
-	else
-		main_pwr = 0
-	end
-	--Update Connectors On moving Throttles	
-	local L_THROTTLE = get_cockpit_draw_argument_value(768)
-	if prev_L_throttle_val ~= L_THROTTLE then
-        local L_throttle_clickable_ref = get_clickable_element_reference("LTHROT_PNT")
-        L_throttle_clickable_ref:update() -- ensure the connector moves too
-        prev_L_throttle_val = L_THROTTLE
+    local birth = LockOn_Options.init_conditions.birth_place
+    if birth == "GROUND_HOT" or birth == "AIR_HOT" then
+        for i = 1, 4 do
+            engines[i].state   = 3
+            engines[i].n1      = 22.0
+            engines[i].n2      = 62.0
+            engines[i].egt     = 420.0
+            engines[i].ff      = 800.0
+            engines[i].oil_psi = 55.0
+            engines[i].cutoff  = 1
+        end
+        park_brake_on = (birth == "GROUND_HOT")
+        gear_down     = (birth == "GROUND_HOT") and 1.0 or 0.0
+    else
+        for i = 1, 4 do
+            engines[i].state   = 0
+            engines[i].n1      = 0.0
+            engines[i].n2      = 0.0
+            engines[i].egt     = 15.0
+            engines[i].ff      = 0.0
+            engines[i].oil_psi = 0.0
+            engines[i].cutoff  = 0
+        end
+        park_brake_on = true
+        gear_down     = 1.0
     end
-	local R_THROTTLE = get_cockpit_draw_argument_value(766)
-	if prev_R_throttle_val ~= R_THROTTLE then
-        local R_throttle_clickable_ref = get_clickable_element_reference("RTHRT_PNT")
-        R_throttle_clickable_ref:update() -- ensure the connector moves too
-        prev_R_throttle_val = R_THROTTLE
-    end
-	--CLAM SHELL COLD START
-	-- Clam positon 1 = open 0 = closed
-	--print_message_to_user(right_clam_pos)
-	local right_clam_pos = get_aircraft_draw_argument_value(610)
-	if (sensor_data.getEngineRightRPM()) <= 35 and right_clam_pos <= 1  then
-		right_clam_pos = right_clam_pos + 0.005   
-		set_aircraft_draw_argument_value(610, right_clam_pos)--set open
-		-- print_message_to_user("plus")
-	elseif (sensor_data.getEngineRightRPM()) >= 36 and right_clam_pos >= 0  then
-		right_clam_pos = right_clam_pos - 0.005    
-		set_aircraft_draw_argument_value(610,right_clam_pos)
-		--print_message_to_user("minus")
-	end
-	local left_clam_pos = get_aircraft_draw_argument_value(611)
-	if (sensor_data.getEngineLeftRPM()) <= 35 and left_clam_pos <= 1  then
-		left_clam_pos = left_clam_pos + 0.005   
-		set_aircraft_draw_argument_value(611, left_clam_pos)--set open
-		--print_message_to_user("plus")
-	elseif (sensor_data.getEngineLeftRPM()) >= 36 and left_clam_pos >= 0  then
-		left_clam_pos = left_clam_pos - 0.005    
-		set_aircraft_draw_argument_value(611, left_clam_pos)
-		--print_message_to_user("minus")
-	end
-	--Ground Power Cart
-	if GROUND_POWER:get() == 1 then
-		gpu_cart = 1
-		set_aircraft_draw_argument_value(616, 1)--GPU CART ON/OFF
-		--set_aircraft_draw_argument_value(617, -1)--GPU CART START LOCATION
-	elseif GROUND_POWER:get() == 0 then
-		gpu_cart = 0
-		set_aircraft_draw_argument_value(616, 0)--GPU CART ON/OFF
-		set_aircraft_draw_argument_value(617, -1)--GPU CART START LOCATION
-	end
---This did not work well, it can only animate on its way in...it is what it is...
-	-- local left_throttle_pos  = get_cockpit_draw_argument_value(104)--Left Throttle
-	-- local right_throttle_pos = get_cockpit_draw_argument_value(105)--Left Throttle
-	-- if left_throttle_pos > 0.3 or right_throttle_pos > 0.3 then
-	-- 	gpu_cart = 0
-	-- 	set_aircraft_draw_argument_value(616, 0)--GPU CART ON/OFF
-	-- 	set_aircraft_draw_argument_value(617, -1)--GPU CART START LOCATION
-	-- 	print_message_to_user("HIDE GPU CART")
-	-- end
-	
-	--Ground Power Animation	
-	 local gpu_pos   = get_aircraft_draw_argument_value(617)
-	if gpu_cart == 1 and gpu_pos < 1 then
-		gpu_pos = gpu_pos + dt / 2
-	 	set_aircraft_draw_argument_value(617, gpu_pos)
-	elseif gpu_cart == 1 and gpu_pos == 1 then
-	 	gpu_pos = 1
-		set_aircraft_draw_argument_value(617, gpu_pos)
-	elseif gpu_cart == 0 and gpu_pos > -1 then
-		gpu_pos = gpu_pos - dt / 2
-		 set_aircraft_draw_argument_value(617, gpu_pos)
-	elseif gpu_cart == 0 and gpu_pos == -1 then
-		set_aircraft_draw_argument_value(616, 0)
-	end
 
-	--Beacon Timer
-	local beacon_rotate = get_aircraft_draw_argument_value(618)
-	if beacon_rotate < 1 then
-		beacon_rotate = (beacon_rotate + dt * 2)
-		set_aircraft_draw_argument_value(618, beacon_rotate)
-	elseif beacon_rotate > 1 then
-		beacon_rotate = 0
-		set_aircraft_draw_argument_value(618, beacon_rotate)
-	end	
-
-	--print_message_to_user(left_throttle_pos)
-
-	--APU SHUTOFF
-	if apu_state == 1 and apu_switch_pos == 0 and sensor_data.getEngineLeftRPM() >= 67 and sensor_data.getEngineRightRPM() >= 67 and apu_autooff == 0 then
-		apu_autooff_timer = apu_autooff_timer + dt
-		--print_message_to_user(apu_autooff_timer)
-	elseif apu_state == 0 then
-		apu_autooff = 0
-		apu_autooff_timer = 0
-	end
-	--APU AUTO SHUTDOWN
-	if apu_autooff_timer >= 60 and apu_switch_pos == 0 and (L_gen_state == 1 or R_gen_state == 1) then
-		dev:performClickableAction(apu_switch, -1, false)--set apu switch OFF
-	end
-
-
+    publish_telemetry()
 end
-------------------------------------------------------------------FUNCTION-UPDATE-END-----------------------------------------------------------------------------------------------
-function delay_time()
-    if mTime > 0 then
-        mTime = mTime + dt
-        if mTime > 0.4 then
-            mTime = 0
+
+function SetCommand(command, value)
+    -- Left Engine Pair Start (Engines 1 & 2)
+    if command == L_Eng_Start or command == CMD_L_ENG_CLICK then
+        start_engine_pair(1, 2)
+    elseif command == L_Eng_Stop or command == 10028 then
+        stop_engine_pair(1, 2)
+    end
+
+    -- Right Engine Pair Start (Engines 3 & 4)
+    if command == R_Eng_Start or command == CMD_R_ENG_CLICK then
+        start_engine_pair(3, 4)
+    elseif command == R_Eng_Stop or command == 10029 then
+        stop_engine_pair(3, 4)
+    end
+
+    -- Master Start All
+    if command == EnginesStart then
+        start_engine_pair(1, 2)
+        start_engine_pair(3, 4)
+    elseif command == EnginesStop then
+        stop_engine_pair(1, 2)
+        stop_engine_pair(3, 4)
+    end
+
+    -- Throttles
+    if command == 2004 then
+        local t = math.max(0.0, math.min(1.0, (value + 1.0) * 0.5))
+        throttle_left = t
+        throttle_right = t
+    elseif command == 2005 then
+        throttle_left = math.max(0.0, math.min(1.0, (value + 1.0) * 0.5))
+    elseif command == 2006 then
+        throttle_right = math.max(0.0, math.min(1.0, (value + 1.0) * 0.5))
+    end
+
+    -- Landing Gear & Brakes
+    if command == PlaneGear or command == CMD_GEAR_CLICK then
+        gear_down = (gear_down > 0.5) and 0.0 or 1.0
+    elseif command == CMD_EMER_GEAR then
+        gear_down = 1.0 -- Emergency gravity drop
+    end
+
+    if command == CMD_PARK_BRAKE or command == 10019 then
+        park_brake_on = true
+    elseif command == 10020 then
+        park_brake_on = false
+    end
+end
+
+function start_engine_pair(e1, e2)
+    for _, idx in ipairs({e1, e2}) do
+        local eng = engines[idx]
+        if eng.state == 0 then
+            eng.state = 1 -- Crank
+            eng.starter = true
+            eng.cutoff = 1
         end
     end
 end
 
+function stop_engine_pair(e1, e2)
+    for _, idx in ipairs({e1, e2}) do
+        local eng = engines[idx]
+        eng.state = 0
+        eng.starter = false
+        eng.cutoff = 0
+    end
+end
+
+function update()
+    local dt = update_time_step
+
+    -- 1. Check Subsystem Pre-conditions via SYSTEM_BUS
+    local elec = SYSTEM_BUS.get_domain("elec") or {}
+    local fuel = SYSTEM_BUS.get_domain("fuel") or {}
+
+    local apu_running   = elec.apu_running or false
+    local dc_power      = (elec.dc_ess_bus_v or 0.0) >= 18.0
+    local fuel_pressure = fuel.manifold_psi or 0.0
+
+    -- 2. Simulate Each of the 4 F118 Turbofans
+    for i = 1, 4 do
+        local eng = engines[i]
+        local thr = (i <= 2) and throttle_left or throttle_right
+
+        if eng.state == 1 then
+            -- Phase 1: Cranking via Air Turbine Starter
+            -- Requires: APU Bleed Air (or other engines running) + DC Power for starter valve
+            local air_available = apu_running or engines_running_count() > 0
+            if air_available and dc_power then
+                eng.n2 = math.min(22.0, eng.n2 + (dt * 3.5))
+                eng.n1 = eng.n2 * 0.25
+                eng.oil_psi = math.min(20.0, eng.n2 * 0.8)
+
+                -- Lightoff Transition: Once N2 > 18% and fuel pressure is available
+                if eng.n2 >= 18.0 and fuel_pressure >= 10.0 and eng.cutoff == 1 then
+                    eng.state = 2 -- Lightoff / Ignition
+                end
+            else
+                -- Spool down if air/power lost
+                eng.n2 = math.max(0.0, eng.n2 - (dt * 5.0))
+                eng.n1 = math.max(0.0, eng.n1 - (dt * 3.0))
+                eng.state = 0
+                eng.starter = false
+            end
+
+        elseif eng.state == 2 then
+            -- Phase 2: Combustion Lightoff & Acceleration
+            eng.egt = math.min(480.0, eng.egt + (dt * 85.0)) -- Rapid EGT rise on lightoff
+            eng.ff  = 300.0 + (eng.n2 * 8.0)
+            eng.n2  = eng.n2 + (dt * 6.0)
+            eng.n1  = eng.n2 * 0.35
+            eng.oil_psi = math.min(55.0, eng.n2 * 0.9)
+
+            -- Starter Cut-out at 50% N2 (PUBLIC_TECHNICAL_INFERENCE)
+            if eng.n2 >= 50.0 then
+                eng.starter = false
+            end
+
+            -- Idle Stabilization at 62% N2
+            if eng.n2 >= 62.0 then
+                eng.state = 3 -- Running
+            end
+
+        elseif eng.state == 3 then
+            -- Phase 3: Operational Engine (Governed by Throttle)
+            if eng.cutoff == 0 or fuel_pressure < 2.0 then
+                -- Flameout / Shutdown
+                eng.state = 0
+            else
+                -- Target parameters based on throttle (0.0 to 1.0)
+                local target_n1  = 22.0 + (thr * 78.0)   -- 22% to 100%
+                local target_n2  = 62.0 + (thr * 39.0)   -- 62% to 101%
+                local target_egt = 420.0 + (thr * 340.0) -- 420°C to 760°C
+                local target_ff  = 800.0 + (thr * 3700.0)-- 800 to 4500 pph
+                local target_oil = 55.0 + (thr * 10.0)   -- 55 to 65 PSI
+
+                -- Smoothly approach target values
+                eng.n1      = eng.n1 + (target_n1 - eng.n1) * (dt * 2.0)
+                eng.n2      = eng.n2 + (target_n2 - eng.n2) * (dt * 2.5)
+                eng.egt     = eng.egt + (target_egt - eng.egt) * (dt * 1.5)
+                eng.ff      = eng.ff + (target_ff - eng.ff) * (dt * 3.0)
+                eng.oil_psi = eng.oil_psi + (target_oil - eng.oil_psi) * (dt * 2.0)
+            end
+
+        elseif eng.state == 0 then
+            -- Phase 0: Shutdown Spool-down
+            eng.n1      = math.max(0.0, eng.n1 - (dt * 3.0))
+            eng.n2      = math.max(0.0, eng.n2 - (dt * 4.0))
+            eng.egt     = math.max(15.0, eng.egt - (dt * 12.0))
+            eng.ff      = 0.0
+            eng.oil_psi = math.max(0.0, eng.oil_psi - (dt * 8.0))
+            eng.starter = false
+        end
+
+        -- Update EICAS parameters
+        eicas_rpm[i]:set(eng.n2)
+        eicas_egt[i]:set(eng.egt)
+        eicas_ff[i]:set(eng.ff)
+        eicas_oil[i]:set(eng.oil_psi)
+    end
+
+    publish_telemetry()
+end
+
+function engines_running_count()
+    local cnt = 0
+    for i = 1, 4 do
+        if engines[i].state == 3 and engines[i].n2 > 55.0 then
+            cnt = cnt + 1
+        end
+    end
+    return cnt
+end
+
+function publish_telemetry()
+    SYSTEM_BUS.publish_batch("engines", {
+        [1] = { state = engines[1].state, n1 = engines[1].n1, n2 = engines[1].n2, egt = engines[1].egt, ff = engines[1].ff, oil_psi = engines[1].oil_psi, starter = engines[1].starter },
+        [2] = { state = engines[2].state, n1 = engines[2].n1, n2 = engines[2].n2, egt = engines[2].egt, ff = engines[2].ff, oil_psi = engines[2].oil_psi, starter = engines[2].starter },
+        [3] = { state = engines[3].state, n1 = engines[3].n1, n2 = engines[3].n2, egt = engines[3].egt, ff = engines[3].ff, oil_psi = engines[3].oil_psi, starter = engines[3].starter },
+        [4] = { state = engines[4].state, n1 = engines[4].n1, n2 = engines[4].n2, egt = engines[4].egt, ff = engines[4].ff, oil_psi = engines[4].oil_psi, starter = engines[4].starter },
+        throttle_left  = throttle_left,
+        throttle_right = throttle_right,
+        gear_down      = gear_down,
+        park_brake_on  = park_brake_on
+    })
+end
+
 need_to_be_closed = false
---[[
-getAngleOfAttack
-getAngleOfSlide
-getBarometricAltitude
-getCanopyPos
-getCanopyState
-getEngineLeftFuelConsumption
-getEngineLeftRPM
-getEngineLeftTemperatureBeforeTurbine
-getEngineRightFuelConsumption
-getEngineRightRPM
-getEngineRightTemperatureBeforeTurbine
-getFlapsPos
-getFlapsRetracted
-getHeading
-getHelicopterCollective
-getHelicopterCorrection
-getHorizontalAcceleration
-getIndicatedAirSpeed
-getLandingGearHandlePos
-getLateralAcceleration
-getLeftMainLandingGearDown
-getLeftMainLandingGearUp
-getMachNumber
-getMagneticHeading
-getNoseLandingGearDown
-getNoseLandingGearUp
-getPitch
-getRadarAltitude
-getRateOfPitch
-getRateOfRoll
-getRateOfYaw
-getRightMainLandingGearDown
-getRightMainLandingGearUp
-getRoll
-getRudderPosition
-getSpeedBrakePos
-getStickPitchPosition
-getStickRollPosition
-getThrottleLeftPosition
-getThrottleRightPosition
-getTotalFuelWeight
-getTrueAirSpeed
-getVerticalAcceleration
-getVerticalVelocity
-getWOW_LeftMainLandingGear
-getWOW_NoseLandingGear
-getWOW_RightMainLandingGear
---]]

@@ -6,6 +6,7 @@ print(">>> [B-2 Spirit] Executing B-2.lua...")
 B_2_Spirit = {
     Name                = 'B-2_Spirit',
     DisplayName         = _('B-2 Spirit (Flyable)'),
+    WorldID             = WSTYPE_PLACEHOLDER,
     Picture             = "B-2_Spirit.png",
     Rate                = 100,
     Shape               = "B-2_Spirit",
@@ -23,9 +24,9 @@ B_2_Spirit = {
             drawonmap   = true,
         },
     },
-    mapclasskey         = "P0091000025",
+    mapclasskey         = "P0091000028",
     attribute           = {wsType_Air, wsType_Airplane, wsType_Fighter, WSTYPE_PLACEHOLDER, "Battleplanes", "Strategic bombers", "Refuelable"},
-    Categories          = {"{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}", "Interceptor",},
+    Categories          = {"{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}", "Interceptor", "Bomber",},
 
     country_of_origin   = "USA",
 

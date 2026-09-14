@@ -1,0 +1,38 @@
+{
+  "nomenclature": "B-2 Spirit Public-Reference Cockpit",
+  "description": "Reference-backed reconstruction based on publicly available imagery and USAF documentation",
+  "phase": "Phase 13 In-Sim Cockpit Qualification & System Binding",
+  "timestamp": "2026-09-14",
+  "geometry_status": "FROZEN",
+  "canonical_binary": "B2_DCS_Cockpit_Phase12.EDM",
+  "artifacts": {
+    "B2_DCS_Cockpit_Phase12.EDM": {
+      "role": "canonical",
+      "size_bytes": 7800604,
+      "sha256": "6ac944f9f4539ffe0d8869524366da764ed37bb0106a69354c796abb8edcdfd4",
+      "path": "c:\\Dev\\AutonomousDronePack\\B-2 Spirit\\B-2 Spirit\\Shapes\\B2_DCS_Cockpit_Phase12.EDM",
+      "bitwise_identical_to_canonical": true
+    },
+    "B-2_Spirit_Cockpit.EDM": {
+      "role": "runtime_alias",
+      "size_bytes": 7800604,
+      "sha256": "6ac944f9f4539ffe0d8869524366da764ed37bb0106a69354c796abb8edcdfd4",
+      "path": "c:\\Dev\\AutonomousDronePack\\B-2 Spirit\\B-2 Spirit\\Shapes\\B-2_Spirit_Cockpit.EDM",
+      "bitwise_identical_to_canonical": true
+    },
+    "B2_DCS_Cockpit_Phase11.EDM": {
+      "role": "phase11_alias",
+      "size_bytes": 7800604,
+      "sha256": "6ac944f9f4539ffe0d8869524366da764ed37bb0106a69354c796abb8edcdfd4",
+      "path": "c:\\Dev\\AutonomousDronePack\\B-2 Spirit\\B-2 Spirit\\Shapes\\B2_DCS_Cockpit_Phase11.EDM",
+      "bitwise_identical_to_canonical": true
+    },
+    "B-2_Spirit_Cockpit_Phase12.EDM": {
+      "role": "archive_copy",
+      "size_bytes": 7800604,
+      "sha256": "6ac944f9f4539ffe0d8869524366da764ed37bb0106a69354c796abb8edcdfd4",
+      "path": "c:\\Dev\\AutonomousDronePack\\B-2 Spirit\\B-2 Spirit\\Shapes\\Cockpit_Source\\Production\\B-2_Spirit_Cockpit_Phase12.EDM",
+      "bitwise_identical_to_canonical": true
+    }
+  }
+}

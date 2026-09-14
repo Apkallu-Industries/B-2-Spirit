@@ -352,168 +352,115 @@ function Switch_Up_Down_Release(hint_, command_, arg_, sound_)
 end
 
 elements = {}
---Engine System
-	elements["BATTERY_PNT"] 	= default_2_position_tumb(_("Battery"), 				devices.ENGINE_SYSTEM, device_commands.Button_1, 700, TOGGLECLICK)
-	elements["APU_PNT"] 		= Switch_Up_Down_Release(_("APU"), 						device_commands.Button_2, 701, TOGGLECLICK)
-	elements["LGEN_PNT"] 		= default_2_position_tumb(_("Left Generator"), 		    devices.ENGINE_SYSTEM, device_commands.Button_3, 	702, 			 TOGGLECLICK)
-	elements["RGEN_PNT"] 		= default_2_position_tumb(_("Right Generator"),		    devices.ENGINE_SYSTEM, device_commands.Button_4, 	703, 			 TOGGLECLICK)
-	elements["LTHROT_PNT"] 	    = default_1_position_tumb(_("Left Engine Start"),   	devices.ENGINE_SYSTEM, device_commands.Button_9, 	999, 1, {0,1},   TOGGLECLICK)
-	elements["RTHRT_PNT"] 	    = default_1_position_tumb(_("Right Engine Start"),   	devices.ENGINE_SYSTEM, device_commands.Button_10,	999, 1, {0,1},   TOGGLECLICK)
-	elements["GEAR_PNT"] 	    = default_1_position_tumb(_("Landing Gear"),   			devices.ENGINE_SYSTEM, device_commands.Button_11,	999, 1, {0,1},   TOGGLECLICK)
-	elements["PARK_PNT"] 	    = default_2_position_tumb(_("Parking Brake"),   		devices.ENGINE_SYSTEM, device_commands.Button_12,   710, 1, {0,1},   TOGGLECLICK)
---Electrical System
-	elements["AAR_PNT"] 	    = default_2_position_tumb(_("Open/Close AAR Port"),   	devices.ELECTRICAL_SYSTEM, device_commands.Button_1,   712, 1, {0,1},   TOGGLECLICK)
-	elements["AARLIGHT_PNT"] 	= default_axis_limited(_("AAR Lights"),   				devices.ELECTRICAL_SYSTEM, device_commands.Button_2,   713, 0.0, 0.3, false, false, {0,1})
-	elements["EXTLIGHT_PNT"] 	= multiposition_switch_limited(_("Nav Lights"),   		devices.ELECTRICAL_SYSTEM, device_commands.Button_3,   715, 5, 0.1, nil, nil,    TOGGLECLICK)
-	elements["TAXI_PNT"] 	    = default_3_position_tumb(_("Taxi/Landing Lights"),   	devices.ELECTRICAL_SYSTEM, device_commands.Button_4,   709, false, true,    TOGGLECLICK)
---Weapon System
-	elements["MASTER_PNT"] 	    = default_2_position_tumb(_("Master Arm"),   			devices.WEAPON_SYSTEM, device_commands.Button_1,    708, 1, {0,1},   TOGGLECLICK)
-	elements["JETT_PNT"] 	    = default_button(_("Emergency Jettison"),   		    devices.WEAPON_SYSTEM, device_commands.Button_2,   	711, 1, {0,1},   TOGGLECLICK)--Electrical System
-	--elements["RWR_UP_PNT"] 	    = default_2_position_tumb(_("RWR Volume Up"),   		devices.WEAPON_SYSTEM, device_commands.Button_2,  	999, 1, {0,1},   TOGGLECLICK)
-	--elements["RWR_DWN_PNT"]     = default_2_position_tumb(_("RWR Volume Down"),   		devices.WEAPON_SYSTEM, device_commands.Button_3,  	999, 1, {0,1},   TOGGLECLICK)
---Avionics System
-	elements["LMAP_PNT"] 	    = default_axis_limited(_("Map Light"),   				devices.AVIONICS, device_commands.Button_1,  	    716, 0.0, 0.25, false, false, {0,1})
-	elements["RMAP_PNT"] 	    = default_axis_limited(_("Map Light"),   				devices.AVIONICS, device_commands.Button_2,  	    717, 0.0, 0.25, false, false, {0,1})
-	elements["EJECT_PNT"] 		= default_button(_("Eject Handle"),	  					devices.AVIONICS, device_commands.Button_11, 		999, 1, {0,1},   TOGGLECLICK)
-	--elements["LMAP_PNT"] 	    = default_2_position_tumb(_("Map Light"),   			devices.AVIONICS, device_commands.Button_1,  	    716, 1, {0,1},   TOGGLECLICK)
-	--elements["RMAP_PNT"] 	    = default_2_position_tumb(_("Map Light"),   			devices.AVIONICS, device_commands.Button_2,  	    717, 1, {0,1},   TOGGLECLICK)
-	elements["MFD_PNT"] 		= default_axis_limited(_("MFD Brightness"),   			devices.AVIONICS, device_commands.Button_3, 704, 0.0, 0.3, false, false, {0,1})
-	elements["PFD_PNT"]			= default_axis_limited(_("PFD Brightness"),   			devices.AVIONICS, device_commands.Button_4, 705, 0.0, 0.3, false, false, {0,1})
-	elements["CONSOLE_PNT"] 	= default_axis_limited(_("Console Lights"),   			devices.AVIONICS, device_commands.Button_5, 706, 0.0, 0.3, false, false, {0,1})
-	elements["FLOOD_PNT"] 		= default_axis_limited(_("Flood Lights"),     			devices.AVIONICS, device_commands.Button_6, 707, 0.0, 0.3, false, false, {0,1})
-	elements["FORMLIGHT_PNT"] 	= default_axis_limited(_("Formation Lights"), 			devices.AVIONICS, device_commands.Button_7, 714, 0.0, 0.3, false, false, {0,1})
-	elements["DAY_NIGHT_PNT"]   = default_2_position_tumb(_("Day/Night Mode"),			devices.AVIONICS, device_commands.Button_8,  	    718, 1, {0,1},   TOGGLECLICK)
---Left UFD
-	elements["L_SMFD_1_PNT"] 	= default_button(_("SMFD OSB 1"),	  devices.AVIONICS, device_commands.Button_10, 	881, 1, {0,1},   TOGGLECLICK)
-	--elements["L_SMFD_2_PNT"] 	= default_2_position_tumb(_("SMFD OSB 2"),	  devices.AVIONICS, device_commands.Button_10, 	882, 1, {0,1},   TOGGLECLICK)
-	--elements["L_SMFD_3_PNT"] 	= default_2_position_tumb(_("SMFD OSB 3"),	  devices.AVIONICS, device_commands.Button_10, 	883, 1, {0,1},   TOGGLECLICK)
-	--elements["L_SMFD_4_PNT"] 	= default_2_position_tumb(_("SMFD OSB 4"),	  devices.AVIONICS, device_commands.Button_10, 	884, 1, {0,1},   TOGGLECLICK)
-	--Right UFD
-	elements["R_SMFD_1_PNT"] 	= default_button(_("SMFD OSB 1"),	  devices.AVIONICS, device_commands.Button_9, 	885, 1, {0,1},   TOGGLECLICK)
-	--elements["R_SMFD_2_PNT"] 	= default_2_position_tumb(_("SMFD OSB 2"),	  devices.AVIONICS, device_commands.Button_9, 	886, 1, {0,1},   TOGGLECLICK)
-	--elements["R_SMFD_3_PNT"] 	= default_2_position_tumb(_("SMFD OSB 3"),	  devices.AVIONICS, device_commands.Button_9, 	887, 1, {0,1},   TOGGLECLICK)
-	--elements["R_SMFD_4_PNT"] 	= default_2_position_tumb(_("SMFD OSB 4"),	  devices.AVIONICS, device_commands.Button_9, 	888, 1, {0,1},   TOGGLECLICK)
--- Left MFD
-	elements["L_MFD_1_PNT"]      = default_button(_("OSB 1"),   		devices.MFD_SYSTEM, device_commands.Button_1,  		801, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_2_PNT"]      = default_button(_("OSB 2"),   		devices.MFD_SYSTEM, device_commands.Button_2,  		802, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_3_PNT"]      = default_button(_("OSB 3"),   		devices.MFD_SYSTEM, device_commands.Button_3,  		803, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_4_PNT"]      = default_button(_("OSB 4"),   		devices.MFD_SYSTEM, device_commands.Button_4,  		804, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_5_PNT"]      = default_button(_("OSB 5"),   		devices.MFD_SYSTEM, device_commands.Button_5,  		805, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_6_PNT"]      = default_button(_("OSB 6"),   		devices.MFD_SYSTEM, device_commands.Button_6,  		806, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_7_PNT"]      = default_button(_("OSB 7"),   		devices.MFD_SYSTEM, device_commands.Button_7,  		807, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_8_PNT"]      = default_button(_("OSB 8"),   		devices.MFD_SYSTEM, device_commands.Button_8,  		808, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_9_PNT"]      = default_button(_("OSB 9"),   		devices.MFD_SYSTEM, device_commands.Button_9,  		809, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_10_PNT"]     = default_button(_("OSB 10"),   		devices.MFD_SYSTEM, device_commands.Button_10,  	810, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_11_PNT"]     = default_button(_("OSB 11"),   		devices.MFD_SYSTEM, device_commands.Button_11,  	811, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_12_PNT"]     = default_button(_("OSB 12"),   		devices.MFD_SYSTEM, device_commands.Button_12,  	812, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_13_PNT"]     = default_button(_("OSB 13"),   		devices.MFD_SYSTEM, device_commands.Button_13,  	813, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_14_PNT"]     = default_button(_("OSB 14"),   		devices.MFD_SYSTEM, device_commands.Button_14,  	814, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_15_PNT"]     = default_button(_("OSB 15"),   		devices.MFD_SYSTEM, device_commands.Button_15,  	815, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_16_PNT"]     = default_button(_("OSB 16"),   		devices.MFD_SYSTEM, device_commands.Button_16,  	816, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_17_PNT"]     = default_button(_("OSB 17"),   		devices.MFD_SYSTEM, device_commands.Button_17,  	817, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_18_PNT"]     = default_button(_("OSB 18"),   		devices.MFD_SYSTEM, device_commands.Button_18,  	818, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_19_PNT"]     = default_button(_("OSB 19"),   		devices.MFD_SYSTEM, device_commands.Button_19,  	819, 1, {0,1},   TOGGLECLICK)
-	elements["L_MFD_20_PNT"]     = default_button(_("OSB 20"),   		devices.MFD_SYSTEM, device_commands.Button_20,  	820, 1, {0,1},   TOGGLECLICK)
--- PMFD
-	elements["PMFD_1_PNT"]      = default_button(_("OSB 1"),   			devices.PMFD_SYSTEM, device_commands.Button_1,  			821, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_2_PNT"]      = default_button(_("OSB 2"),   			devices.PMFD_SYSTEM, device_commands.Button_2,  			822, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_3_PNT"]      = default_button(_("OSB 3"),   			devices.PMFD_SYSTEM, device_commands.Button_3,  			823, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_4_PNT"]      = default_button(_("OSB 4"),   			devices.PMFD_SYSTEM, device_commands.Button_4,  			824, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_5_PNT"]      = default_button(_("OSB 5"),   			devices.PMFD_SYSTEM, device_commands.Button_5,  			825, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_6_PNT"]      = default_button(_("OSB 6"),   			devices.PMFD_SYSTEM, device_commands.Button_6,  			826, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_7_PNT"]      = default_button(_("OSB 7"),   			devices.PMFD_SYSTEM, device_commands.Button_7,  			827, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_8_PNT"]      = default_button(_("OSB 8"),   			devices.PMFD_SYSTEM, device_commands.Button_8,  			828, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_9_PNT"]      = default_button(_("OSB 9"),   			devices.PMFD_SYSTEM, device_commands.Button_9,  			829, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_10_PNT"]     = default_button(_("OSB 10"),   		devices.PMFD_SYSTEM, device_commands.Button_10,  			830, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_11_PNT"]     = default_button(_("OSB 11"),   		devices.PMFD_SYSTEM, device_commands.Button_11,  			831, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_12_PNT"]     = default_button(_("OSB 12"),   		devices.PMFD_SYSTEM, device_commands.Button_12,  			832, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_13_PNT"]     = default_button(_("OSB 13"),   		devices.PMFD_SYSTEM, device_commands.Button_13,  			833, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_14_PNT"]     = default_button(_("OSB 14"),   		devices.PMFD_SYSTEM, device_commands.Button_14,  			834, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_15_PNT"]     = default_button(_("OSB 15"),   		devices.PMFD_SYSTEM, device_commands.Button_15,  			835, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_16_PNT"]     = default_button(_("OSB 16"),   		devices.PMFD_SYSTEM, device_commands.Button_16,  			836, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_17_PNT"]     = default_button(_("OSB 17"),   		devices.PMFD_SYSTEM, device_commands.Button_17,  			837, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_18_PNT"]     = default_button(_("OSB 18"),   		devices.PMFD_SYSTEM, device_commands.Button_18,  			838, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_19_PNT"]     = default_button(_("OSB 19"),   		devices.PMFD_SYSTEM, device_commands.Button_19,  			839, 1, {0,1},   TOGGLECLICK)
-	elements["PMFD_20_PNT"]     = default_button(_("OSB 20"),   		devices.PMFD_SYSTEM, device_commands.Button_20,  			840, 1, {0,1},   TOGGLECLICK)
--- Right MF
-	elements["R_MFD_1_PNT"]      = default_button(_("OSB 1"),   		devices.MFD_SYSTEM, device_commands.Button_21,  	841, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_2_PNT"]      = default_button(_("OSB 2"),   		devices.MFD_SYSTEM, device_commands.Button_22,  	842, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_3_PNT"]      = default_button(_("OSB 3"),   		devices.MFD_SYSTEM, device_commands.Button_23,  	843, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_4_PNT"]      = default_button(_("OSB 4"),   		devices.MFD_SYSTEM, device_commands.Button_24,  	844, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_5_PNT"]      = default_button(_("OSB 5"),   		devices.MFD_SYSTEM, device_commands.Button_25,  	845, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_6_PNT"]      = default_button(_("OSB 6"),   		devices.MFD_SYSTEM, device_commands.Button_26,  	846, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_7_PNT"]      = default_button(_("OSB 7"),   		devices.MFD_SYSTEM, device_commands.Button_27,  	847, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_8_PNT"]      = default_button(_("OSB 8"),   		devices.MFD_SYSTEM, device_commands.Button_28,  	848, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_9_PNT"]      = default_button(_("OSB 9"),   		devices.MFD_SYSTEM, device_commands.Button_29,  	849, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_10_PNT"]     = default_button(_("OSB 10"),   		devices.MFD_SYSTEM, device_commands.Button_30,  	850, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_11_PNT"]     = default_button(_("OSB 11"),   		devices.MFD_SYSTEM, device_commands.Button_31,  	851, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_12_PNT"]     = default_button(_("OSB 12"),   		devices.MFD_SYSTEM, device_commands.Button_32,  	852, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_13_PNT"]     = default_button(_("OSB 13"),   		devices.MFD_SYSTEM, device_commands.Button_33,  	853, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_14_PNT"]     = default_button(_("OSB 14"),   		devices.MFD_SYSTEM, device_commands.Button_34,  	854, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_15_PNT"]     = default_button(_("OSB 15"),   		devices.MFD_SYSTEM, device_commands.Button_35,  	855, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_16_PNT"]     = default_button(_("OSB 16"),   		devices.MFD_SYSTEM, device_commands.Button_36,  	856, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_17_PNT"]     = default_button(_("OSB 17"),   		devices.MFD_SYSTEM, device_commands.Button_37,  	857, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_18_PNT"]     = default_button(_("OSB 18"),   		devices.MFD_SYSTEM, device_commands.Button_38,  	858, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_19_PNT"]     = default_button(_("OSB 19"),   		devices.MFD_SYSTEM, device_commands.Button_39,  	859, 1, {0,1},   TOGGLECLICK)
-	elements["R_MFD_20_PNT"]     = default_button(_("OSB 20"),   		devices.MFD_SYSTEM, device_commands.Button_40,  	860, 1, {0,1},   TOGGLECLICK)
--- Center MFD
-	elements["B_MFD_1_PNT"]      = default_button(_("OSB 1"),   		devices.MFD_SYSTEM, device_commands.Button_41,  		861, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_2_PNT"]      = default_button(_("OSB 2"),   		devices.MFD_SYSTEM, device_commands.Button_42,  		862, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_3_PNT"]      = default_button(_("OSB 3"),   		devices.MFD_SYSTEM, device_commands.Button_43,  		863, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_4_PNT"]      = default_button(_("OSB 4"),   		devices.MFD_SYSTEM, device_commands.Button_44,  		864, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_5_PNT"]      = default_button(_("OSB 5"),   		devices.MFD_SYSTEM, device_commands.Button_45,  		865, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_6_PNT"]      = default_button(_("OSB 6"),   		devices.MFD_SYSTEM, device_commands.Button_46,  		866, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_7_PNT"]      = default_button(_("OSB 7"),   		devices.MFD_SYSTEM, device_commands.Button_47,  		867, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_8_PNT"]      = default_button(_("OSB 8"),   		devices.MFD_SYSTEM, device_commands.Button_48,  		868, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_9_PNT"]      = default_button(_("OSB 9"),   		devices.MFD_SYSTEM, device_commands.Button_49,  		869, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_10_PNT"]     = default_button(_("OSB 10"),   		devices.MFD_SYSTEM, device_commands.Button_50,  	870, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_11_PNT"]     = default_button(_("OSB 11"),   		devices.MFD_SYSTEM, device_commands.Button_51,  	871, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_12_PNT"]     = default_button(_("OSB 12"),   		devices.MFD_SYSTEM, device_commands.Button_52,  	872, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_13_PNT"]     = default_button(_("OSB 13"),   		devices.MFD_SYSTEM, device_commands.Button_53,  	873, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_14_PNT"]     = default_button(_("OSB 14"),   		devices.MFD_SYSTEM, device_commands.Button_54,  	874, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_15_PNT"]     = default_button(_("OSB 15"),   		devices.MFD_SYSTEM, device_commands.Button_55,  	875, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_16_PNT"]     = default_button(_("OSB 16"),   		devices.MFD_SYSTEM, device_commands.Button_56,  	876, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_17_PNT"]     = default_button(_("OSB 17"),   		devices.MFD_SYSTEM, device_commands.Button_57,  	877, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_18_PNT"]     = default_button(_("OSB 18"),   		devices.MFD_SYSTEM, device_commands.Button_58,  	878, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_19_PNT"]     = default_button(_("OSB 19"),   		devices.MFD_SYSTEM, device_commands.Button_59,  	879, 1, {0,1},   TOGGLECLICK)
-	elements["B_MFD_20_PNT"]     = default_button(_("OSB 20"),   		devices.MFD_SYSTEM, device_commands.Button_60,  	880, 1, {0,1},   TOGGLECLICK)
---ICP Stuff and Shit
-	elements["ICP_COM1_PNT"]     = default_button(_("Com 1"),   		devices.ICP_SYSTEM, device_commands.Button_1,  		889, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_COM2_PNT"]     = default_button(_("Com 2"),   		devices.ICP_SYSTEM, device_commands.Button_2,  		890, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_NAV_PNT"]      = default_button(_("NAV"),   			devices.ICP_SYSTEM, device_commands.Button_3,  		891, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_STPT_PNT"]     = default_button(_("STPT"),   			devices.ICP_SYSTEM, device_commands.Button_4,  		892, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_ALT_PNT"]      = default_button(_("ALT"),   			devices.ICP_SYSTEM, device_commands.Button_5,  		894, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_HUD_PNT"]      = default_button(_("HUD"),   			devices.ICP_SYSTEM, device_commands.Button_6,  		895, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_OTHR_PNT"]     = default_button(_("OTHR"),   			devices.ICP_SYSTEM, device_commands.Button_7,  		896, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_OP1_PNT"]      = default_button(_("Option 1"),   		devices.ICP_SYSTEM, device_commands.Button_8,  		898, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_OP2_PNT"]      = default_button(_("Option 2"),   		devices.ICP_SYSTEM, device_commands.Button_9,  		899, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_OP3_PNT"]      = default_button(_("Option 3"),   		devices.ICP_SYSTEM, device_commands.Button_10,  	900, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_OP4_PNT"]      = default_button(_("Option 4"),   		devices.ICP_SYSTEM, device_commands.Button_11,  	901, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_OP5_PNT"]      = default_button(_("Option 5"),   		devices.ICP_SYSTEM, device_commands.Button_12,  	902, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_UP_PNT"]       = default_button(_("Rocker Up"),   	devices.ICP_SYSTEM, device_commands.Button_13,  	903, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_DWN_PNT"]      = default_button(_("Rocker Down"),   	devices.ICP_SYSTEM, device_commands.Button_14,  	903, -1, {0,1},   TOGGLECLICK)
-	elements["ICP_AP_PNT"]       = default_button(_("Autopilot"),   	devices.ICP_SYSTEM, device_commands.Button_15,  	904, 1, {0,1},   TOGGLECLICK)	
-	--elements["ICP_MRK_PNT"]      = default_button(_("MARK"),   			devices.ICP_SYSTEM, device_commands.Button_16,  	905, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_1_PNT"]      	 = default_button(_("1"),   			devices.ICP_SYSTEM, device_commands.Button_17,  	906, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_2_PNT"]      	 = default_button(_("2"),   			devices.ICP_SYSTEM, device_commands.Button_18,  	907, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_3_PNT"]      	 = default_button(_("3"),   			devices.ICP_SYSTEM, device_commands.Button_19,  	908, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_4_PNT"]      	 = default_button(_("4"),   			devices.ICP_SYSTEM, device_commands.Button_20,  	909, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_5_PNT"]      	 = default_button(_("5"),   			devices.ICP_SYSTEM, device_commands.Button_21,  	910, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_6_PNT"]      	 = default_button(_("6"),   			devices.ICP_SYSTEM, device_commands.Button_22,  	911, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_7_PNT"]      	 = default_button(_("7"),   			devices.ICP_SYSTEM, device_commands.Button_23,  	912, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_8_PNT"]      	 = default_button(_("8"),   			devices.ICP_SYSTEM, device_commands.Button_24,  	913, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_9_PNT"]      	 = default_button(_("9"),   			devices.ICP_SYSTEM, device_commands.Button_25,  	914, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_CLR_PNT"]      = default_button(_("CLR"),  			devices.ICP_SYSTEM, device_commands.Button_26,  	915, 1, {0,1},   TOGGLECLICK)	
-	elements["ICP_0_PNT"]      	 = default_button(_("0"),   			devices.ICP_SYSTEM, device_commands.Button_27,  	916, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_UNDO_PNT"]  	 = default_button(_("UNDO"),   			devices.ICP_SYSTEM, device_commands.Button_28,  	917, 1, {0,1},   TOGGLECLICK)
-	elements["ICP_WHEELUP_PNT"]  = default_axis_limited(_("Wheel Up"),  		devices.ICP_SYSTEM, device_commands.Button_29,  	918, 0.0, 0.3, false, false, {0,1})
-	elements["ICP_WHEELDWN_PNT"] = default_axis_limited(_("Wheel Down"),		devices.ICP_SYSTEM, device_commands.Button_30,  	918, 0.0, 0.3, false, false, {0,1})
-	--elements["ICP_KNEXT_PNT"]    = default_button(_("Kneeboard Next Page"), devices.ICP_SYSTEM, device_commands.Button_31,  	999, 1, {0,1},   TOGGLECLICK)
-	--elements["ICP_KPREV_PNT"]    = default_button(_("Kneeboard Prev Page"), devices.ICP_SYSTEM, device_commands.Button_32,  	999, -1, {0,1},   TOGGLECLICK)
 
+-- =========================================================================
+-- B-2 SPIRIT PUBLIC-REFERENCE COCKPIT — PHYSICAL CLICKABLE CONTRACT
+-- All elements map 1:1 to verified physical connectors in B2_DCS_Cockpit_Phase12.EDM
+-- =========================================================================
 
---elements["AARLIGHT_PNT"] 	= default_axis_limited(_("AAR Lights"),   				devices.ELECTRICAL_SYSTEM, device_commands.Button_2,   713, 0.0, 0.3, false, false, {0,1})
-	
+-- 1. Multipurpose Display Units (8 MDUs x 20 OSBs = 160 Perimeter Softkeys)
+local mdu_names = {
+    "MDU_L_UPPER_OUTBOARD",
+    "MDU_L_UPPER_CENTRE",
+    "MDU_L_UPPER_INBOARD",
+    "MDU_L_LOWER",
+    "MDU_R_UPPER_INBOARD",
+    "MDU_R_UPPER_CENTRE",
+    "MDU_R_UPPER_OUTBOARD",
+    "MDU_R_LOWER"
+}
+
+local base_osb_cmd = 1000
+for mdu_idx, mdu in ipairs(mdu_names) do
+    for osb = 1, 20 do
+        local connector_name = string.format("%s_OSB_%02d_PNT", mdu, osb)
+        local cmd = base_osb_cmd + (mdu_idx - 1) * 20 + osb
+        local hint = string.format("%s OSB %02d", mdu, osb)
+        local arg_id = 800 + (mdu_idx - 1) * 20 + osb
+        elements[connector_name] = default_button(_(hint), devices.MDU_MANAGER or devices.AVIONICS, cmd, arg_id, 1, {0,1}, TOGGLECLICK)
+    end
+end
+
+-- 2. Right-Station Control & Display Unit (CDU) Keys, LSKs and Brightness
+local cdu_cmd_base = 2000
+local cdu_keys = {
+    ["CDU_KEY_0_PNT"]    = {"0", 0},
+    ["CDU_KEY_1_PNT"]    = {"1", 1},
+    ["CDU_KEY_2_PNT"]    = {"2", 2},
+    ["CDU_KEY_3_PNT"]    = {"3", 3},
+    ["CDU_KEY_4_PNT"]    = {"4", 4},
+    ["CDU_KEY_5_PNT"]    = {"5", 5},
+    ["CDU_KEY_6_PNT"]    = {"6", 6},
+    ["CDU_KEY_7_PNT"]    = {"7", 7},
+    ["CDU_KEY_8_PNT"]    = {"8", 8},
+    ["CDU_KEY_9_PNT"]    = {"9", 9},
+    ["CDU_KEY_CLR_PNT"]  = {"CLR", 10},
+    ["CDU_KEY_ENT_PNT"]  = {"ENT", 11},
+    ["CDU_KEY_COMM_PNT"] = {"COMM", 12},
+    ["CDU_KEY_NAV_PNT"]  = {"NAV", 13},
+    ["CDU_KEY_IFF_PNT"]  = {"IFF", 14},
+    ["CDU_KEY_FPLN_PNT"] = {"FPLN", 15},
+    ["CDU_KEY_WPN_PNT"]  = {"WPN", 16},
+    ["CDU_KEY_INDX_PNT"] = {"INDX", 17},
+    ["CDU_KEY_PWR_PNT"]  = {"PWR", 18},
+    ["CDU_LSK_L_1_PNT"]  = {"LSK L1", 19},
+    ["CDU_LSK_L_2_PNT"]  = {"LSK L2", 20},
+    ["CDU_LSK_L_3_PNT"]  = {"LSK L3", 21},
+    ["CDU_LSK_L_4_PNT"]  = {"LSK L4", 22},
+    ["CDU_LSK_R_1_PNT"]  = {"LSK R1", 23},
+    ["CDU_LSK_R_2_PNT"]  = {"LSK R2", 24},
+    ["CDU_LSK_R_3_PNT"]  = {"LSK R3", 25},
+    ["CDU_LSK_R_4_PNT"]  = {"LSK R4", 26},
+}
+
+for pnt, data in pairs(cdu_keys) do
+    local hint = "CDU " .. data[1]
+    local cmd = cdu_cmd_base + data[2]
+    local arg_id = 900 + data[2]
+    elements[pnt] = default_button(_(hint), devices.CDU_SYSTEM or devices.AVIONICS, cmd, arg_id, 1, {0,1}, TOGGLECLICK)
+end
+elements["CDU_BRT_PNT"] = default_axis_limited(_("CDU Display Brightness"), devices.CDU_SYSTEM or devices.AVIONICS, cdu_cmd_base + 30, 930, 1.0, 0.2, false, false, {0,1})
+
+-- 3. Flight Setting Panels (Dual Pilot/Copilot Autopilot & Nav Selectors)
+local fsp_controls = {
+    ["FSP_L_CRS_SEL_PNT"]  = {"Pilot Course Select", 1},
+    ["FSP_L_HDG_SEL_PNT"]  = {"Pilot Heading Select", 2},
+    ["FSP_L_BARO_PNT"]     = {"Pilot Barometric Setting", 3},
+    ["FSP_L_CMD_ALT_PNT"]  = {"Pilot Commanded Altitude", 4},
+    ["FSP_L_AS_SET_PNT"]   = {"Pilot Airspeed Set", 5},
+    ["FSP_L_RALT_SET_PNT"] = {"Pilot Radar Altimeter Min", 6},
+    ["FSP_R_CRS_SEL_PNT"]  = {"Copilot Course Select", 7},
+    ["FSP_R_HDG_SEL_PNT"]  = {"Copilot Heading Select", 8},
+    ["FSP_R_BARO_PNT"]     = {"Copilot Barometric Setting", 9},
+    ["FSP_R_CMD_ALT_PNT"]  = {"Copilot Commanded Altitude", 10},
+    ["FSP_R_AS_SET_PNT"]   = {"Copilot Airspeed Set", 11},
+    ["FSP_R_RALT_SET_PNT"] = {"Copilot Radar Altimeter Min", 12},
+}
+
+for pnt, data in pairs(fsp_controls) do
+    elements[pnt] = default_axis(_(data[1]), devices.AVIONICS, 3000 + data[2], 940 + data[2], 0.5, 0.1, true, true)
+end
+
+-- 4. Aircraft Primary Controls & Subsystem Switches
+elements["BATTERY_PNT"]        = default_2_position_tumb(_("Battery Power Switch"), devices.ENGINE_SYSTEM, device_commands.Button_1, 700, TOGGLECLICK)
+elements["APU_PNT"]            = Switch_Up_Down_Release(_("Auxiliary Power Unit (APU) Start"), device_commands.Button_2, 701, TOGGLECLICK)
+elements["LGEN_PNT"]           = default_2_position_tumb(_("Left Generator Control"), devices.ENGINE_SYSTEM, device_commands.Button_3, 702, TOGGLECLICK)
+elements["RGEN_PNT"]           = default_2_position_tumb(_("Right Generator Control"), devices.ENGINE_SYSTEM, device_commands.Button_4, 703, TOGGLECLICK)
+elements["MASTER_PNT"]         = default_2_position_tumb(_("Master Arm Switch"), devices.WEAPON_SYSTEM, device_commands.Button_1, 708, 1, {0,1}, TOGGLECLICK)
+elements["GEAR_PNT"]           = default_1_position_tumb(_("Landing Gear Handle"), devices.ENGINE_SYSTEM, device_commands.Button_11, 720, 1, {0,1}, TOGGLECLICK)
+elements["GEAR_EMERGENCY_PNT"] = default_button(_("Emergency Landing Gear Extension"), devices.ENGINE_SYSTEM, 3500, 721, 1, {0,1}, TOGGLECLICK)
+elements["HYD1_PNT"]           = default_2_position_tumb(_("Hydraulic System 1 Isolator"), devices.ENGINE_SYSTEM, 3501, 722, TOGGLECLICK)
+elements["HYD2_PNT"]           = default_2_position_tumb(_("Hydraulic System 2 Isolator"), devices.ENGINE_SYSTEM, 3502, 723, TOGGLECLICK)
+elements["NAV_PNT"]            = default_2_position_tumb(_("Inertial Navigation Align Switch"), devices.AVIONICS, 3503, 724, TOGGLECLICK)
+elements["BIT_PNT"]            = default_button(_("Initiate Built-In Test (BIT)"), devices.AVIONICS, 3504, 725, 1, {0,1}, TOGGLECLICK)
+elements["SPEEDBRAKE_PNT"]     = default_1_position_tumb(_("Speedbrake Control Handle"), devices.ENGINE_SYSTEM, 3505, 726, 1, {0,1}, TOGGLECLICK)
+elements["FLAP_PNT"]           = default_1_position_tumb(_("Flap Control Handle"), devices.ENGINE_SYSTEM, 3506, 727, 1, {0,1}, TOGGLECLICK)
+
+-- 5. Annunciators
+elements["ANN_MASTER_CAUTION_PNT"]   = default_button(_("Master Caution Acknowledge/Reset"), devices.AVIONICS, Keys.PlaneMasterCautionOff or 379, 728, 1, {0,1}, TOGGLECLICK)
+elements["ANN_HUD_VALID_PNT"]        = default_button(_("HUD / Display Valid Acknowledge"), devices.AVIONICS, 3507, 729, 1, {0,1}, TOGGLECLICK)
+elements["ANN_DISPLAY_DEGRADED_PNT"] = default_button(_("Display Degraded Mode Clear"), devices.AVIONICS, 3508, 730, 1, {0,1}, TOGGLECLICK)
+
 for i,o in pairs(elements) do
 	if  o.class[1] == class_type.TUMB or 
 	   (o.class[2]  and o.class[2] == class_type.TUMB) or

@@ -1,4 +1,6 @@
-local cockpit_local_point = {6.560000, 2.050000, 0.000000} -- Aligned with Cockpit_F-22A
+-- B-2 Spirit Public-Reference Cockpit: Pilot Station (Left Seat)
+-- DCS Space: {X = Forward, Y = Height/Up, Z = Right(+)/Left(-)}
+local cockpit_local_point = {6.050000, 1.180000, -0.574000}
 
 local b2_cockpit_view = {
     CockpitLocalPoint      = cockpit_local_point,
@@ -6,7 +8,7 @@ local b2_cockpit_view = {
     CameraAngleRestriction = {false, 90.000000, 0.500000},
     CameraAngleLimits      = {200.000000, -80.000000, 110.000000},
     EyePoint               = {0.000000, 0.000000, 0.000000},
-    limits_6DOF            = {x = {-0.400000, 0.800000}, y = {-0.500000, 0.400000}, z = {-0.500000, 1.800000}, roll = 90.000000},
+    limits_6DOF            = {x = {-0.300000, 0.400000}, y = {-0.250000, 0.300000}, z = {-0.350000, 0.550000}, roll = 45.000000},
     ShoulderSize           = 0.20,
     AllowBinocular         = true,
 }

@@ -1,0 +1,259 @@
+{
+  "menus": {
+    "SYSTEM": [
+      "FUEL",
+      "FCH",
+      "ELEC",
+      "ECS",
+      "ENG"
+    ],
+    "FCH": [
+      "HYD",
+      "FCS"
+    ],
+    "BOTTOM": [
+      "RECD",
+      "STAT",
+      "AVIN",
+      "DISK"
+    ],
+    "CDU": [
+      "COMM",
+      "NAV",
+      "IFF",
+      "RNAV",
+      "FPLN",
+      "WPN",
+      "INDX",
+      "PWR"
+    ],
+    "COMM": [
+      "COMM1",
+      "COMM2",
+      "HF",
+      "CIPHER",
+      "LINK 16",
+      "RADIO SET"
+    ]
+  },
+  "limitations": "Estimated dimensions and opposite station; static display previews; unbound click volumes",
+  "objects": 1370,
+  "components": [
+    {
+      "name": "B2_COCKPIT_MASTER",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_SYSTEM",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_SYSTEM_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_SYSTEM_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_SYSTEM_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_CENTER",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_CENTER_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_CENTER_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_CENTER_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_OUTER",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_OUTER_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_OUTER_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_OUTER_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_LOWER",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_L_LOWER_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_LOWER_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_L_LOWER_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "FLIGHT_SETTING_PANEL_L",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "FSP_L_CRS_SEL_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "FSP_L_HDG_SEL_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_R_SYSTEM",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "MDU_R_SYSTEM_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_SYSTEM_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_SYSTEM_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_R_CENTER",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "MDU_R_CENTER_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_CENTER_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_CENTER_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_R_OUTER",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "MDU_R_OUTER_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_OUTER_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_OUTER_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MDU_R_LOWER",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "MDU_R_LOWER_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_LOWER_RENDER_ANCHOR",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "MDU_R_LOWER_DAY_NITE_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "FLIGHT_SETTING_PANEL_R",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "FSP_R_CRS_SEL_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "FSP_R_HDG_SEL_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "CID",
+      "provenance": "REFERENCE_BACKED_INFERRED"
+    },
+    {
+      "name": "CID_PAGE_PREVIEW",
+      "provenance": "SIMULATION_ABSTRACTION"
+    },
+    {
+      "name": "CDU",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "CDU_BRT_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "GEAR_EMERGENCY",
+      "provenance": "REFERENCE_BACKED"
+    },
+    {
+      "name": "CENTER_MECHANICAL_CONTROLS",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "CENTER_SELECTOR_0_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "CENTER_SELECTOR_1_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "CENTER_SELECTOR_2_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "CENTER_SELECTOR_3_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "CENTER_SELECTOR_4_PIVOT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "PILOT_SEAT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "PILOT_EYE",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MISSION_COMMANDER_SEAT",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    },
+    {
+      "name": "MISSION_COMMANDER_EYE",
+      "provenance": "ESTIMATED_FROM_REFERENCE"
+    }
+  ]
+}
