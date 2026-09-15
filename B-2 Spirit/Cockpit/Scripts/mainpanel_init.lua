@@ -19,6 +19,7 @@
 
 shape_name   	   			 = "B-2_Spirit_Cockpit"
 is_EDM			   			 = true
+is_internal                  = true
 new_model_format   			 = true
 ambient_light      			 = {255,255,255}
 ambient_color_day_texture    = {72, 100, 160}
@@ -42,6 +43,7 @@ use_external_views = false
 --   +X forward, +Y up, +Z right (metres). If you sit too low raise Y; too far
 --   back increase X. Fine-tune in ~0.05 m steps.
 cockpit_local_point = {0.100000, -0.200000, 0.000000}
+
 day_texture_set_value   = 0.0
 night_texture_set_value = 0.1
 

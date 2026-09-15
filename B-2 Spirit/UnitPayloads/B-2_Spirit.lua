@@ -65,7 +65,56 @@ local unitPayloads = {
             },
             ["tasks"]  = { [1] = 32, [2] = 34 },
         },
+        [9] = {
+            ["name"]   = "13th BS - 2x GBU-43/B MOAB (Reaper's Harvest)",
+            ["pylons"] = {
+                [1] = { ["CLSID"] = "{GBU-43_MOAB}", ["num"] = 1 },
+                [2] = { ["CLSID"] = "{GBU-43_MOAB}", ["num"] = 2 },
+            },
+            ["tasks"]  = { [1] = 32, [2] = 34 },
+        },
+        [10] = {
+            ["name"]   = "13th BS - 2x MOAB ('Eat Shit!' + 'Enjoy!')",
+            ["pylons"] = {
+                [1] = { ["CLSID"] = "{GBU-43_MOAB_EATSHIT}", ["num"] = 1 },
+                [2] = { ["CLSID"] = "{GBU-43_MOAB_ENJOY}", ["num"] = 2 },
+            },
+            ["tasks"]  = { [1] = 32, [2] = 34 },
+        },
+        [11] = {
+            ["name"]   = "13th BS - 2x MOAB ('Present from USA' + 'New Toy')",
+            ["pylons"] = {
+                [1] = { ["CLSID"] = "{GBU-43_MOAB_PRESENT}", ["num"] = 1 },
+                [2] = { ["CLSID"] = "{GBU-43_MOAB_NEWTOY}", ["num"] = 2 },
+            },
+            ["tasks"]  = { [1] = 32, [2] = 34 },
+        },
+        [12] = {
+            ["name"]   = "13th BS - 2x GBU-43/B MOAB (Custom Pilot Inscription)",
+            ["pylons"] = {
+                [1] = { ["CLSID"] = "{GBU-43_MOAB_CUSTOM}", ["num"] = 1 },
+                [2] = { ["CLSID"] = "{GBU-43_MOAB_CUSTOM}", ["num"] = 2 },
+            },
+            ["tasks"]  = { [1] = 32, [2] = 34 },
+        },
+        [13] = {
+            ["name"]   = "13th BS - 2x GBU-43/B MOAB (Personalized PBR Suite: Bay 1 + Bay 2)",
+            ["pylons"] = {
+                [1] = { ["CLSID"] = "{GBU-43_MOAB_SLOT1}", ["num"] = 1 },
+                [2] = { ["CLSID"] = "{GBU-43_MOAB_SLOT2}", ["num"] = 2 },
+            },
+            ["tasks"]  = { [1] = 32, [2] = 34 },
+        },
+        [14] = {
+            ["name"]   = "13th BS - 16x GBU-31 JDAM (Personalized PBR Suite: Bay 1 + Bay 2)",
+            ["pylons"] = {
+                [1] = { ["CLSID"] = "{GBU_31_SLOT1}", ["num"] = 1 },
+                [2] = { ["CLSID"] = "{GBU_31_SLOT2}", ["num"] = 2 },
+            },
+            ["tasks"]  = { [1] = 32, [2] = 34 },
+        },
     },
     ["unitType"] = "B-2_Spirit",
 }
 return unitPayloads
+

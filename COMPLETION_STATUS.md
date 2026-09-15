@@ -44,8 +44,9 @@ The exterior airframe and full 3D cockpit interior are **operational and flyable
 | SFM aerodynamics | 🟡 | Plausible flying-wing table, but hand-tuned, not CFD/flight-test derived (§4.6). |
 | Engines (SFM) | 🟡 | 4× TurboFan, thrust table ~308 kN total; needs tuning vs. real perf. |
 | Crew model (3 seats) | ✅ | Pilot / Mission Commander(WSO) / Relief, all `can_be_playable`. |
-| Weapons / pylons | ✅ | Two internal bays, 9 validated CLSIDs each (JDAM family, LGB, JSOW, CBU). |
-| UnitPayloads presets | ✅ | 8 ME loadouts. |
+| Weapons / pylons | ✅ | Two internal bays, 14 validated CLSIDs each (JDAM family, LGB, JSOW, CBU, plus 5 personalized GBU-43/B MOAB heavy blast variants). |
+| UnitPayloads presets | ✅ | 11 ME loadouts (including 13th BS 'Eat Shit!' & 'Enjoy!' mixed heavy strike presets). |
+| **GBU-43/B MOAB Heavy Suite** | ✅ | 5 distinct 3D EDM models (`GBU-43_MOAB*.EDM`), 4K PBR textures with 13th BS Grim Reapers marker-pen graffiti, 8,482 kg H-6 explosive blast physics, and live "Personal Statement Delivered" in-cockpit achievement broadcast. |
 | Damage model (logical) | 🟡 | Cell/critical-damage table present; **visual** battle damage needs EDM args (§4.3). |
 | Exterior EDM | 🟡 | Real animated model (bay doors, elevons, decelerons, gear). LODs/collision/destroyed model unverified (§4.1). |
 | Textures (exterior PBR) | ✅ | Airframe/Mech/Glass diffuse+normal+roughmet. |

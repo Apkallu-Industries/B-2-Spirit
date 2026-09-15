@@ -38,26 +38,29 @@ creators[devices.WEAPON_SYSTEM]			 = {"avLuaDevice"		    ,LockOn_Options.script_
 creators[devices.MFD_SYSTEM]			 = {"avLuaDevice"		    ,LockOn_Options.script_path.."Systems/MFD_System.lua"}
 creators[devices.PMFD_SYSTEM]			 = {"avLuaDevice"		    ,LockOn_Options.script_path.."Systems/PMFD_System.lua"}
 creators[devices.ICP_SYSTEM]			 = {"avLuaDevice"		    ,LockOn_Options.script_path.."Systems/ICP_System.lua"}
+creators[devices.MDU_MANAGER]			 = {"avLuaDevice"		    ,LockOn_Options.script_path.."Systems/mdu_page_manager.lua"}
+creators[devices.FUEL_SYSTEM]			 = {"avLuaDevice"		    ,LockOn_Options.script_path.."Systems/Fuel_System.lua"}
+creators[devices.FLIGHT_DATA]			 = {"avLuaDevice"		    ,LockOn_Options.script_path.."Systems/Flight_Data.lua"}
 --creators[devices.FCS]					 = {"avLuaDevice"			,LockOn_Options.script_path.."Systems/FCS.lua"}
 
 --creators[devices.KNEEBOARD] = {"avKneeboard",LockOn_Options.common_script_path.."KNEEBOARD/device/init.lua"}
 
 indicators = {}
--- Pilot MFD 1 (Left): EICAS / Engine Status Matrix
+-- Pilot MFD 1 (Left / Upper Outboard): EICAS / Engine Status Matrix
 indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."EICAS/init.lua",
 	nil,
 	{
 		{"B2_MFD1_CENTER", "B2_MFD1_DOWN", "B2_MFD1_RIGHT"}
 	}
 }
--- Pilot MFD 2 (Center): PFD / Primary Flight Display (Attitude / Speed / Alt)
+-- Pilot MFD 2 (Center / Upper Centre): PFD / Primary Flight Display (Attitude / Speed / Alt)
 indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."PFD/init.lua",
 	nil,
 	{
 		{"B2_MFD2_CENTER", "B2_MFD2_DOWN", "B2_MFD2_RIGHT"}
 	}
 }
--- Pilot MFD 3 (Right): Flight Controls & Systems Status
+-- Pilot MFD 3 (Right / Upper Inboard): Flight Controls & Systems Status
 indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."FCS/init.lua",
 	nil,
 	{
@@ -78,21 +81,21 @@ indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."TSD/i
 		{"B2_CID_CENTER", "B2_CID_DOWN", "B2_CID_RIGHT"}
 	}
 }
--- Copilot MFD 5 (Left): Tactical / Defensive Management System (DMS / RWR)
+-- Copilot MFD 5 (Left / Upper Inboard): Tactical / Defensive Management System (DMS / RWR)
 indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."DMS_RWR/init.lua",
 	nil,
 	{
 		{"B2_MFD5_CENTER", "B2_MFD5_DOWN", "B2_MFD5_RIGHT"}
 	}
 }
--- Copilot MFD 6 (Center): Copilot PFD Repeater
+-- Copilot MFD 6 (Center / Upper Centre): Copilot PFD Repeater
 indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."PFD/init.lua",
 	nil,
 	{
 		{"B2_MFD6_CENTER", "B2_MFD6_DOWN", "B2_MFD6_RIGHT"}
 	}
 }
--- Copilot MFD 7 (Right): Stores Management System (SMS / Weapons & Rotary Bays)
+-- Copilot MFD 7 (Right / Upper Outboard): Stores Management System (SMS / Weapons & Rotary Bays)
 indicators[#indicators + 1] = {"ccIndicator", LockOn_Options.script_path.."SMS/init.lua",
 	nil,
 	{
